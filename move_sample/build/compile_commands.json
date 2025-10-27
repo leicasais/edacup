@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/sol/Descargas/edacup-0.4a/edacup/move_sample/build",
+  "command": "/usr/bin/g++ -isystem /home/sol/dev/vcpkg/installed/x64-linux/include -g -std=gnu++20 -o CMakeFiles/move_sample.dir/main.cpp.o -c /home/sol/Descargas/edacup-0.4a/edacup/move_sample/main.cpp",
+  "file": "/home/sol/Descargas/edacup-0.4a/edacup/move_sample/main.cpp",
+  "output": "CMakeFiles/move_sample.dir/main.cpp.o"
+}
+]
