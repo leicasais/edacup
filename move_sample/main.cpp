@@ -37,7 +37,7 @@ static inline float yawTo(float fromX, float fromZ, float toX, float toZ)
 
 static void setHomeStriker(float x, float z, float yaw, float dribbler, float kick, float chirp)
 {
-    json msg = {
+    json sampleMessage = {
         {"type", "set"},
         {"data",
          {
@@ -99,7 +99,7 @@ void goalKeepeTracking(void)
     float newGKPosition[2];
 
     json sampleMessage = {
-        {"type", "state"},
+        "type": "state",
         {"data",
          {{
              "ball",
@@ -113,17 +113,22 @@ void goalKeepeTracking(void)
          }}},
          
     };
+    // cout connects to server
+    cout << sampleMessage.dump() << endl;
+
+    // cerr prints to debug console
+    cerr << "Updated ball data." << endl;
 
     float GKBallDistance [3] = 
     {
         ballPosition[0] - GKPosition[0], 
         ballPosition[1] - GKPosition[1],
         ballPosition[2] - GKPosition[2]
-    }
+    };
 
     if(GKBallDistance[0] < 0.0f)
     {
-        if(validateArea(GKPosition[0] + 1), 'X')
+        if(validateArea(GKPosition[0] + 1, 'X'))
         {
             newGKPosition[0] = GKPosition[0] + 1;
         }else
@@ -133,7 +138,7 @@ void goalKeepeTracking(void)
     }
     else
     {
-        if(validateArea(GKPosition[0] - 1), 'X')
+        if(validateArea(GKPosition[0] - 1, 'X'))
         {
             newGKPosition[0] = GKPosition[0] - 1;
         }else
@@ -149,7 +154,7 @@ void goalKeepeTracking(void)
             newGKPosition[1] = GKPosition[2] + 0.5f;
         }else
         {
-            newGKPosition[1] = GKPosition[2]
+            newGKPosition[1] = GKPosition[2];
         }
     }
     else
@@ -163,19 +168,20 @@ void goalKeepeTracking(void)
         }
     }
     
-    json sampleMessage = {
+    json sampleMessage2 = {
         {"type", "set"},
         {"data",
          {{
-             "homeBot2": {
-                   "positionXZ": newGKPosition,
-                },
+             "homeBot2", 
+             {
+                {"positionXZ", newGKPosition},
+            },
          }}},
     };
 
 
     // cout connects to server
-    cout << sampleMessage.dump() << endl;
+    cout << sampleMessage2.dump() << endl;
 
     // cerr prints to debug console
     cerr << "Updated homeBot2 defense." << endl;
@@ -208,10 +214,10 @@ int main(int argc, char *argv[])
                 {
                     // Moves robot every two seconds
                     if (time == 0)
-                        poseHomeBot1(-0.5, 0.3, 135 * DEG_TO_RAD);
+                        //setHomeStriker(-0.5, 0.3, 135 * DEG_TO_RAD);
                         goalKeepeTracking();
                     else if (time == 40)
-                        poseHomeBot1(-0.1, 0.3, -135 * DEG_TO_RAD);
+                        //setHomeStriker(-0.1, 0.3, -135 * DEG_TO_RAD);
                         goalKeepeTracking();
                     time++;
                     if (time >= 80)

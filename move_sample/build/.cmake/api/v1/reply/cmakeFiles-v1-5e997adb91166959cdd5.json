@@ -808,8 +808,8 @@
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "/home/sol/Descargas/edacup-0.4a/edacup/move_sample/build",
-		"source" : "/home/sol/Descargas/edacup-0.4a/edacup/move_sample"
+		"build" : "/home/sol/edacup/move_sample/build",
+		"source" : "/home/sol/edacup/move_sample"
 	},
 	"version" : 
 	{

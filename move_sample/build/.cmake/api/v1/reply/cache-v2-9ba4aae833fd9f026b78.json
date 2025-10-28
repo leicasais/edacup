@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/sol/Descargas/edacup-0.4a/edacup/move_sample/build"
+			"value" : "/home/sol/edacup/move_sample/build"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -527,7 +527,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/sol/Descargas/edacup-0.4a/edacup/move_sample/build/CMakeFiles/pkgRedirects"
+			"value" : "/home/sol/edacup/move_sample/build/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -587,7 +587,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/sol/Descargas/edacup-0.4a/edacup/move_sample"
+			"value" : "/home/sol/edacup/move_sample"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1375,7 +1375,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/sol/Descargas/edacup-0.4a/edacup/move_sample/build"
+			"value" : "/home/sol/edacup/move_sample/build"
 		},
 		{
 			"name" : "move_sample_IS_TOP_LEVEL",
@@ -1399,7 +1399,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/sol/Descargas/edacup-0.4a/edacup/move_sample"
+			"value" : "/home/sol/edacup/move_sample"
 		},
 		{
 			"name" : "nlohmann_json_DIR",
