@@ -1,0 +1,19 @@
+{
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "accept-ranges": "bytes",
+    "access-control-allow-origin": "*",
+    "cache-control": "max-age=86400, public",
+    "connection": "Upgrade, Keep-Alive",
+    "content-length": "18656",
+    "content-type": "model/gltf-binary",
+    "date": "Fri, 31 Oct 2025 02:15:51 GMT",
+    "etag": "\"48e0-62ee72d253480\"",
+    "keep-alive": "timeout=5, max=100",
+    "last-modified": "Mon, 24 Feb 2025 18:04:50 GMT",
+    "server": "Apache/2.4.58 (Ubuntu)",
+    "upgrade": "h2"
+  },
+  "cachedAt": 1761876951983
+}

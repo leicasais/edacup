@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/sol/edacup/move_sample/build"
+			"value" : "/home/sol/Descargas/edacup-0.5/edacup/move_sample/build"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -139,10 +139,10 @@
 				},
 				{
 					"name" : "HELPSTRING",
-					"value" : "CXX compiler"
+					"value" : "No help, variable specified on the command line."
 				}
 			],
-			"type" : "STRING",
+			"type" : "FILEPATH",
 			"value" : "/usr/bin/g++"
 		},
 		{
@@ -267,10 +267,10 @@
 				},
 				{
 					"name" : "HELPSTRING",
-					"value" : "C compiler"
+					"value" : "No help, variable specified on the command line."
 				}
 			],
-			"type" : "STRING",
+			"type" : "FILEPATH",
 			"value" : "/usr/bin/gcc"
 		},
 		{
@@ -527,7 +527,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/sol/edacup/move_sample/build/CMakeFiles/pkgRedirects"
+			"value" : "/home/sol/Descargas/edacup-0.5/edacup/move_sample/build/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -587,7 +587,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/sol/edacup/move_sample"
+			"value" : "/home/sol/Descargas/edacup-0.5/edacup/move_sample"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1111,11 +1111,11 @@
 				},
 				{
 					"name" : "HELPSTRING",
-					"value" : "The CMake toolchain file"
+					"value" : "No help, variable specified on the command line."
 				}
 			],
-			"type" : "FILEPATH",
-			"value" : "/home/sol/dev/vcpkg/scripts/buildsystems/vcpkg.cmake"
+			"type" : "STRING",
+			"value" : "~/dev/vcpkg/scripts/buildsystems/vcpkg.cmake"
 		},
 		{
 			"name" : "CMAKE_UNAME",
@@ -1375,7 +1375,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/sol/edacup/move_sample/build"
+			"value" : "/home/sol/Descargas/edacup-0.5/edacup/move_sample/build"
 		},
 		{
 			"name" : "move_sample_IS_TOP_LEVEL",
@@ -1399,7 +1399,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/sol/edacup/move_sample"
+			"value" : "/home/sol/Descargas/edacup-0.5/edacup/move_sample"
 		},
 		{
 			"name" : "nlohmann_json_DIR",

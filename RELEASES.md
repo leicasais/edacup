@@ -1,8 +1,14 @@
 # Releases
 
+## 0.5
+
+* Mejorado el agarre de los objetos.
+* Añadida cache de archivos descargados (carpeta `cache`).
+
 ## 0.4
 
 * Añadida la capacidad de mover los objetos.
+* Resuelto un error en el cálculo de las posiciones del mensaje `state`.
 
 ## 0.3
 

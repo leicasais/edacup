@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/sol/edacup/move_sample/build",
-		"source" : "/home/sol/edacup/move_sample"
+		"build" : "/home/sol/Descargas/edacup-0.5/edacup/move_sample/build",
+		"source" : "/home/sol/Descargas/edacup-0.5/edacup/move_sample"
 	},
 	"version" : 
 	{
