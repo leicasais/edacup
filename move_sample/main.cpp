@@ -12,7 +12,7 @@
 using namespace std;
 using json = nlohmann::json;
 
-void goalieControl(const json& message)
+void poseHomeBot2(const json& message)
 {
     static bool initialized = false;
     static float goalLineZ = 0.0f;
@@ -21,9 +21,9 @@ void goalieControl(const json& message)
 
     float pel_x = data["ball"]["position"][0];     // pelota X
     float pel_z = data["ball"]["position"][2];     // pelota Z
-    float arq_x = data["homeBot1"]["position"][0]; // robot X
-    float arq_z = data["homeBot1"]["position"][2]; // robot Z
-    float arq_y = data["homeBot1"]["rotation"][1]; // orientación actual
+    float arq_x = data["homeBot2"]["position"][0]; // robot X
+    float arq_z = data["homeBot2"]["position"][2]; // robot Z
+    float arq_y = data["homeBot2"]["rotation"][1]; // orientación actual
 
     if (!initialized) 
     { 
@@ -38,11 +38,11 @@ void goalieControl(const json& message)
     float dist = std::sqrt(dx*dx + dz*dz);
     float kick = (dist < 0.12f) ? 1.0f : 0.0f;   
 
-    json setMsg = {
+    json sampleMessage = {
         {"type", "set"},
         {"data", {
             {
-                "homeBot1", {
+                "homeBot2", {
                     {"positionXZ", {targetX, targetZ}},
                     {"rotationY",  arq_y},
                     {"dribbler",   1},
@@ -52,7 +52,7 @@ void goalieControl(const json& message)
         }}
     };
 
-    cout << setMsg.dump() << endl;              
+    cout << sampleMessage.dump() << endl;              
     cerr << "Goalie -> targetX:" << targetX << " Z:" << targetZ << " kick:" << kick << endl;
 }
 
@@ -105,15 +105,18 @@ int main(int argc, char *argv[])
                 if (isRunning)
                 {
                     // Moves robot every two seconds
-                    if (time == 0)
+                    if (time == 0){
                         poseHomeBot1(-0.9, 0.0, -90 * DEG_TO_RAD);
-                    else if (time == 40)
+                        poseHomeBot2(message);
+                    }
+                    else if (time == 40){
                         poseHomeBot1(-0.09, 0.0, -90 * DEG_TO_RAD);
+                        poseHomeBot2(message);
+                    }
                     time++;
                     if (time >= 80)
                         time = 0;
                     
-                    goalieControl(message);
 
                 }
             }
