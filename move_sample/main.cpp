@@ -12,56 +12,50 @@
 using namespace std;
 using json = nlohmann::json;
 
-// --- NUEVO: controlador de arquero para homeBot1 ---
 void goalieControl(const json& message)
 {
-    // Guardamos una vez la "línea del arco" (el Z donde lo colocaste al inicio)
-    static bool init = false;
+    static bool initialized = false;
     static float goalLineZ = 0.0f;
 
     const auto& data = message["data"];
 
-    // Posiciones relevantes
-    float bx = data["ball"]["position"][0];   // pelota X
-    float bz = data["ball"]["position"][2];   // pelota Z
-    float rx = data["homeBot1"]["position"][0];
-    float rz = data["homeBot1"]["position"][2];
-    float ry = data["homeBot1"]["rotation"][1];
+    float pel_x = data["ball"]["position"][0];     // pelota X
+    float pel_z = data["ball"]["position"][2];     // pelota Z
+    float arq_x = data["homeBot1"]["position"][0]; // robot X
+    float arq_z = data["homeBot1"]["position"][2]; // robot Z
+    float arq_y = data["homeBot1"]["rotation"][1]; // orientación actual
 
-    if (!init) { goalLineZ = rz; init = true; }  // fijamos línea del arco (Z) una sola vez
+    if (!initialized) 
+    { 
+        goalLineZ = arq_z; 
+        initialized = true; 
+    }
 
-    // Reglas de arquero:
-    // - SIEMPRE en la línea del arco (Z fijo)
-    // - Seguir la pelota en el eje X
-    float targetX = bx;
+    float targetX = pel_x;
     float targetZ = goalLineZ;
 
-    // Si la pelota está "al lado", patear hacia adelante a máxima potencia
-    float dx = bx - rx, dz = bz - rz;
+    float dx = pel_x - arq_x, dz = pel_z - arq_z;
     float dist = std::sqrt(dx*dx + dz*dz);
-    float kick = (dist < 0.12f) ? 1.0f : 0.0f;  // umbral cercano
+    float kick = (dist < 0.12f) ? 1.0f : 0.0f;   
 
-    // Construimos el mensaje "set" solo para homeBot1
     json setMsg = {
         {"type", "set"},
-        {"data", {{
-            "homeBot1", {
-                {"positionXZ", {targetX, targetZ}},
-                {"rotationY",  ry},     // mantenemos orientación actual
-                {"dribbler",   1},      // dribbler siempre prendido
-                {"kick",       kick}    // máximo si está al lado
+        {"data", {
+            {
+                "homeBot1", {
+                    {"positionXZ", {targetX, targetZ}},
+                    {"rotationY",  arq_y},
+                    {"dribbler",   1},
+                    {"kick",       kick}
+                }
             }
-        }}}
+        }}
     };
 
-    // Enviamos comando al simulador
-    std::cout << setMsg.dump() << std::endl;
-
-    // Debug opcional
-    std::cerr << "Goalie update -> X:" << targetX
-              << " Z:" << targetZ
-              << " kick:" << kick << std::endl;
+    cout << setMsg.dump() << endl;              
+    cerr << "Goalie -> targetX:" << targetX << " Z:" << targetZ << " kick:" << kick << endl;
 }
+
 
 void poseHomeBot1(float positionX, float positionZ, float rotationY)
 {

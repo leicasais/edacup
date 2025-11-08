@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/Users/agusmontoto/Library/Mobile Documents/com~apple~CloudDocs/ITBA/2º Año/Primer Cuatrimestre/Estructura y Algoritmo de Datos/TP4/Edacup-7/edacup/build",
+  "command": "/usr/bin/clang++  -isystem /opt/homebrew/include -g -std=gnu++20 -arch arm64 -o CMakeFiles/move_sample.dir/main.cpp.o -c \"/Users/agusmontoto/Library/Mobile Documents/com~apple~CloudDocs/ITBA/2º Año/Primer Cuatrimestre/Estructura y Algoritmo de Datos/TP4/Edacup-7/edacup/move_sample/main.cpp\"",
+  "file": "/Users/agusmontoto/Library/Mobile Documents/com~apple~CloudDocs/ITBA/2º Año/Primer Cuatrimestre/Estructura y Algoritmo de Datos/TP4/Edacup-7/edacup/move_sample/main.cpp",
+  "output": "CMakeFiles/move_sample.dir/main.cpp.o"
+}
+]
