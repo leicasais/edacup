@@ -1,5 +1,5 @@
 // ============================================================================
-// EDACup 2025 - ELITE ATTACKER MODULE
+// EDACup 2025
 // Based on CMDragons, ZJUNlict, and UT Austin Villa winning strategies
 // Designed for maximum goal scoring and continuous pressure
 // Sources: https://www.ifaamas.org/Proceedings/aamas2014/aamas/p493.pdf 
@@ -217,3 +217,4 @@ int main(int argc, char *argv[]) {
         }
     }
 }
+
