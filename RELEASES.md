@@ -1,5 +1,14 @@
 # Releases
 
+## 0.7
+
+* Corregido un error en el seteo de la rotación de los robots para el team2.
+
+## 0.6
+
+* Corregido un error en el cálculo del ángulo rotationY.
+* Corregido el kicker (que no disparaba).
+
 ## 0.5
 
 * Mejorado el agarre de los objetos.

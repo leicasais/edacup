@@ -1,5 +1,5 @@
 {
-    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXAiOiJKV1QiLCJpc3MiOiJodHRwczovL3d3dy5vcGVucmVhbGl0eS5hcHAiLCJzdWIiOiJlZGFjdXAtZzZAb3BlbnJlYWxpdHkuYXBwIiwiZXhwIjoxNzc2Mjc0ODg0fQ.LE5sP7ywWgFWTciFkfsNZP2Vcxel75CIwPD33iygCjI",
-    "team1Binary": "move_sample/build/move_sample",
-    "team2Binary": "move_sample/build/move_sample"
+    "accessToken": "",
+    "team1Binary": "",
+    "team2Binary": ""
 }

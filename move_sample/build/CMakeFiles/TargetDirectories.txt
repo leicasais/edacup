@@ -1,3 +1,0 @@
-/home/sol/Descargas/edacup-0.5/edacup/move_sample/build/CMakeFiles/move_sample.dir
-/home/sol/Descargas/edacup-0.5/edacup/move_sample/build/CMakeFiles/edit_cache.dir
-/home/sol/Descargas/edacup-0.5/edacup/move_sample/build/CMakeFiles/rebuild_cache.dir
