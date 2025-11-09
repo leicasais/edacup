@@ -34,34 +34,57 @@ typedef struct{
     float angularVelocity[3];
 }objectState_t;
 
-/*
-void faceAndKickToOpponentGoal_HomeBot1(const objectState_t& ball, const objectState_t& me,float oppGoalX, float oppGoalZ, float kickDist = 0.12f)
+// ===== NUEVO (Datasheet): Arquero que se mantiene en linea de arco, sigue X y patea al arco =====
+void goalieControlFacingGoal(const json& message, float oppGoalX, float oppGoalZ)
 {
-    // 1) Calcular yaw para mirar al arco rival
-    float dirX = oppGoalX - me.position[0];
-    float dirZ = oppGoalZ - me.position[2];
-    float yaw  = std::atan2(dirX, dirZ);  // 0 rad -> +Z; ajustá si tu sim difiere
+    static bool initialized = false;
+    static float goalLineZ = 0.0f;
 
-    float x = ball.position[0] - me.position[0];
-    float z = ball.position[2] - me.position[2];
-    float canKick = (dx*dx + dz*dz) < (kickDist * kickDist) ? 1.0f : 0.0f;
+    const auto& data = message["data"];
 
-    // 3) Enviar set al estilo que ya usás "kicker"
-    json msg = {
+    // Estado (Datasheet): position = [x, y, z], rotation = [x, y, z]
+    float bx = data["ball"]["position"][0];
+    float bz = data["ball"]["position"][2];
+    float rx = data["homeBot1"]["position"][0];
+    float rz = data["homeBot1"]["position"][2];
+
+    if (!initialized) { goalLineZ = rz; initialized = true; } // fijar linea del arco una sola vez
+
+    // 1) Mantenerse en la linea del arco y seguir X de la pelota
+    float targetX = bx;
+    float targetZ = goalLineZ;
+
+    // 2) Orientarse al centro del arco rival
+    //    Convencion asumida: rotationY=0 mira hacia +Z. Ajustar si tu sim difiere.
+    float dirX = oppGoalX - rx;
+    float dirZ = oppGoalZ - rz;
+    float yaw  = std::atan2(dirX, dirZ);
+
+    // 3) Patear si la pelota esta cerca
+    float dx = bx - rx, dz = bz - rz;
+    float dist2 = dx*dx + dz*dz;
+    float kick = (dist2 < (0.12f*0.12f)) ? 1.0f : 0.0f;
+
+    // 4) Enviar "set" (estructura del Datasheet)
+    json setMsg = {
         {"type", "set"},
-        {"data", {{
-            "homeBot1", {
-                {"positionXZ", {me.position[0], me.position[2]}}, // mantené la pos actual (o seteala antes)
-                {"rotationY",  yaw},                              // apuntar al arco rival
-                {"dribbler",   1},
-                {"kicker",     canKick}                           // 1 = máxima potencia
+        {"data", {
+            {
+                "homeBot1", {
+                    {"positionXZ", {targetX, targetZ}},
+                    {"rotationY",  yaw},
+                    {"dribbler",   1},
+                    {"kick",       kick}
+                }
             }
-        }}}
+        }}
     };
 
-    std::cout << msg.dump() << std::endl;
+    std::cout << setMsg.dump() << std::endl;
+    std::cerr << "Goalie(Face&Kick) -> X:" << targetX << " Z:" << targetZ << " yaw:" << yaw << " kick:" << kick << std::endl;
 }
-*/
+
+
 
 void trackObject(objectState_t &objectState, char objectType, const json &message) {
 
@@ -280,6 +303,8 @@ int main(int argc, char *argv[])
                     trackObject(goalKeeper, GOALKEEPER, message);     
                     chaseBall(ball,f,p);
                     goalKeeperTracking(ball, goalKeeper);
+                    goalieControlFacingGoal(message, 0.0f, +0.9f);
+
                 }
             }
         }
