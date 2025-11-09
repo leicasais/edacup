@@ -41,6 +41,7 @@ void trackBall(ballState_t &ballState, const json &message) {
     ballState.angularVelocity[2] = ball["angularVelocity"][2];
 }
 
+
 void poseHomeBot1(float positionX, float positionZ, float rotationY)
 {
     json sampleMessage = {
@@ -103,8 +104,12 @@ int main(int argc, char *argv[])
                      // Moves robot every two seconds
                     if (time == 0)
                         poseHomeBot1(-0.9, 0.0, -90 * DEG_TO_RAD);
-                    else if (time == 40)
+                        poseHomeBot2(message);
+                    }
+                    else if (time == 40){
                         poseHomeBot1(-0.09, 0.0, -90 * DEG_TO_RAD);
+                        poseHomeBot2(message);
+                    }
                     time++;
                     if (time >= 80)
                         time = 0;
