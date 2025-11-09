@@ -13,14 +13,6 @@
 
 #define DEG_TO_RAD (3.1415926535F / 180.0F)
 
-#define areaInferiorBoundaryX -145.5
-#define areaSuperiorBoundaryX -(145.5 -25)
-#define areaInferiorBoundaryZ -40
-#define areaSuperiorBoundaryZ 40
-
-#define areaCentreZ 0
-#define areaCentreX -(145 - 12.5)
-
 #define GOALKEEPER 'g'
 #define GOALIE 'p'
 #define BALL 'b'
@@ -137,7 +129,7 @@ void chaseBall(const objectState_t &ballState, const Field f, const Penalty p)
     float positionZ = ballState.position[2];
 
     clampToField(positionX, positionZ, f);
-    Penalty_out(positionX, positionZ, p);
+    avoidPenaltyAreas(positionX, positionZ, p, f);
 
     json sampleMessage = {
         {"type", "set"},
@@ -196,29 +188,7 @@ bool ballOutsideArea(float position, char axis)
     }
 }
 
-void centreGoalKeeper (const objectState_t &goalKeeper)
-{
-    json sampleMessage = {
-            {"type", "set"},
-            {"data",
-                {
-                    {"homeBot2",
-                        {
-                            {"positionXZ", {areaCentreX, areaCentreZ}},
-                            {"rotationY", 0},
-                            {"dribbler", 1}
-                        }
-                    }
-                }
-            }
-        };
-
-        
-    cout << sampleMessage.dump() << endl;
-    cerr << "Updated homeBot2 centre." << endl;
-}
-
-void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goalKeeper)
+void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goalKeeper, const Field& f, const Penalty& p)
 {
     float newGKPosition[2];
 
@@ -231,14 +201,12 @@ void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goa
     float GKBallDistanceX = fabs(GKPositionX - ballPositionX);
     float GKBallDistanceZ = fabs(GKPositionZ - ballPositionZ);
 
-    // X
-    newGKPosition[0] = ballOutsideArea(ballPositionX, 'X')
-                        ? areaSuperiorBoundaryX
-                        : ballPositionX;
-    // Z
-    newGKPosition[1] = ballOutsideArea(ballPositionZ, 'Z')
-                        ? areaSuperiorBoundaryZ
-                        : ballPositionZ;
+    // El arquero sigue la posición X de la pelota pero dentro del área penal
+    newGKPosition[0] = ballPositionX;
+    newGKPosition[1] = ballPositionZ;
+    
+    // Mantener al arquero DENTRO de su área penal
+    keepInOwnPenaltyArea(newGKPosition[0], newGKPosition[1], p, f);
 
     json sampleMessage;
 
