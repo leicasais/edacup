@@ -7,10 +7,9 @@
 #endif
 
 struct Field {
-    // Mitades de la cancha en cm (desde el centro al borde)
     double halfX = 219.0 / 2.0; // eje largo
     double halfZ = 158.0 / 2.0; // eje corto
-    double safety = 9.0 + 1.0;  // radio robot (~9 cm) + 1 cm extra
+    double safety = 9.0 + 1.0;  // radio robot + 1 cm extra
 };
 
 // Penales pegados a los bordes z = ±halfZ, “entran” 80 cm hacia adentro
