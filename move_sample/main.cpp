@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <stdio.h>
 
 #include <nlohmann/json.hpp>
 
@@ -12,55 +13,32 @@
 using namespace std;
 using json = nlohmann::json;
 
-// --- NUEVO: controlador de arquero para homeBot1 ---
-void goalieControl(const json& message)
+typedef struct
 {
-    // Guardamos una vez la "línea del arco" (el Z donde lo colocaste al inicio)
-    static bool init = false;
-    static float goalLineZ = 0.0f;
+    float position[3];
+    float rotation[3];
+    float velocity[3];
+    float angularVelocity[3];
+}ballState_t;
 
-    const auto& data = message["data"];
+void trackBall(ballState_t &ballState, const json &message) {
+    const auto &ball = message["data"]["ball"];
 
-    // Posiciones relevantes
-    float bx = data["ball"]["position"][0];   // pelota X
-    float bz = data["ball"]["position"][2];   // pelota Z
-    float rx = data["homeBot1"]["position"][0];
-    float rz = data["homeBot1"]["position"][2];
-    float ry = data["homeBot1"]["rotation"][1];
+    ballState.position[0] = ball["position"][0];
+    ballState.position[1] = ball["position"][1];
+    ballState.position[2] = ball["position"][2];
 
-    if (!init) { goalLineZ = rz; init = true; }  // fijamos línea del arco (Z) una sola vez
+    ballState.rotation[0] = ball["rotation"][0];
+    ballState.rotation[1] = ball["rotation"][1];
+    ballState.rotation[2] = ball["rotation"][2];
 
-    // Reglas de arquero:
-    // - SIEMPRE en la línea del arco (Z fijo)
-    // - Seguir la pelota en el eje X
-    float targetX = bx;
-    float targetZ = goalLineZ;
+    ballState.velocity[0] = ball["velocity"][0];
+    ballState.velocity[1] = ball["velocity"][1];
+    ballState.velocity[2] = ball["velocity"][2];
 
-    // Si la pelota está "al lado", patear hacia adelante a máxima potencia
-    float dx = bx - rx, dz = bz - rz;
-    float dist = std::sqrt(dx*dx + dz*dz);
-    float kick = (dist < 0.12f) ? 1.0f : 0.0f;  // umbral cercano
-
-    // Construimos el mensaje "set" solo para homeBot1
-    json setMsg = {
-        {"type", "set"},
-        {"data", {{
-            "homeBot1", {
-                {"positionXZ", {targetX, targetZ}},
-                {"rotationY",  ry},     // mantenemos orientación actual
-                {"dribbler",   1},      // dribbler siempre prendido
-                {"kick",       kick}    // máximo si está al lado
-            }
-        }}}
-    };
-
-    // Enviamos comando al simulador
-    std::cout << setMsg.dump() << std::endl;
-
-    // Debug opcional
-    std::cerr << "Goalie update -> X:" << targetX
-              << " Z:" << targetZ
-              << " kick:" << kick << std::endl;
+    ballState.angularVelocity[0] = ball["angularVelocity"][0];
+    ballState.angularVelocity[1] = ball["angularVelocity"][1];
+    ballState.angularVelocity[2] = ball["angularVelocity"][2];
 }
 
 void poseHomeBot1(float positionX, float positionZ, float rotationY)
@@ -89,6 +67,8 @@ int main(int argc, char *argv[])
 {
     bool isRunning = false;
     uint32_t time = 0;
+    ballState_t ball;
+
 
     while (true)
     {
@@ -99,7 +79,16 @@ int main(int argc, char *argv[])
             string line;
             getline(cin, line);
 
-            json message = json::parse(line);
+            if (line.empty())
+                continue; // ignorar
+
+            if (line[0] != '{' && line[0] != '[')
+            {
+                std::cout << "Línea ignorada, no es JSON: " << line << std::endl;
+                continue;
+            }
+
+           json message = json::parse(line);
 
             string type = message["type"];
             if (type == "start")
@@ -110,7 +99,8 @@ int main(int argc, char *argv[])
             {
                 if (isRunning)
                 {
-                    // Moves robot every two seconds
+                    trackBall(ball, message);
+                     // Moves robot every two seconds
                     if (time == 0)
                         poseHomeBot1(-0.9, 0.0, -90 * DEG_TO_RAD);
                     else if (time == 40)
@@ -118,9 +108,6 @@ int main(int argc, char *argv[])
                     time++;
                     if (time >= 80)
                         time = 0;
-                    
-                    goalieControl(message);
-
                 }
             }
         }
@@ -131,3 +118,4 @@ int main(int argc, char *argv[])
         }
     }
 }
+

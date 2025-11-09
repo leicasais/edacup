@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/move_sample.dir/main.cpp.o -o move_sample 
