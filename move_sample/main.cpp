@@ -13,11 +13,11 @@
 
 #define DEG_TO_RAD (3.1415926535F / 180.0F)
 
-#define areaInferioirBoundaryX 39
-#define areaSuperiorBoundaryX 119
+#define areaInferioirBoundaryX 183 - 39
+#define areaSuperiorBoundaryX 183 - 119
 #define centreAreaBoundaryX 79
-#define areaInferioirBoundaryZ 0
-#define areaSuperiorBoundaryZ 25
+#define areaInferioirBoundaryZ 219
+#define areaSuperiorBoundaryZ 219 - 25
 #define centreAreaBoundaryZ 12.5
 
 #define GOALKEEPER 'g'

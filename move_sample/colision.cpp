@@ -31,6 +31,6 @@ inline void clampToField(float& x, float& z, const Field& f) {
 void Penalty_out(float& x, float& z, Penalty& p){
     if (x < -p.half_d) x=  -p.half_d;
     if (x > p.half_d) x=  p.half_d;
-    if (z< -p.w) = -p.w;
-    if (z> p.w) = p.w;
+    if (z< -p.w) z= -p.w;
+    if (z> p.w) z= p.w;
 }
