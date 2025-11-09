@@ -34,6 +34,34 @@ typedef struct{
     float angularVelocity[3];
 }objectState_t;
 
+/*
+void faceAndKickToOpponentGoal_HomeBot1(const objectState_t& ball, const objectState_t& me,float oppGoalX, float oppGoalZ, float kickDist = 0.12f)
+{
+    // 1) Calcular yaw para mirar al arco rival
+    float dirX = oppGoalX - me.position[0];
+    float dirZ = oppGoalZ - me.position[2];
+    float yaw  = std::atan2(dirX, dirZ);  // 0 rad -> +Z; ajustá si tu sim difiere
+
+    float x = ball.position[0] - me.position[0];
+    float z = ball.position[2] - me.position[2];
+    float canKick = (dx*dx + dz*dz) < (kickDist * kickDist) ? 1.0f : 0.0f;
+
+    // 3) Enviar set al estilo que ya usás "kicker"
+    json msg = {
+        {"type", "set"},
+        {"data", {{
+            "homeBot1", {
+                {"positionXZ", {me.position[0], me.position[2]}}, // mantené la pos actual (o seteala antes)
+                {"rotationY",  yaw},                              // apuntar al arco rival
+                {"dribbler",   1},
+                {"kicker",     canKick}                           // 1 = máxima potencia
+            }
+        }}}
+    };
+
+    std::cout << msg.dump() << std::endl;
+}
+*/
 
 void trackObject(objectState_t &objectState, char objectType, const json &message) {
 
