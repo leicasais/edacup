@@ -31,14 +31,11 @@ inline void clampToField(float& x, float& z, const Field& f) {
 }
 
 // Evita que el robot entre en CUALQUIERA de las dos áreas penales
-// Portería propia: z < 0 (negativo)
-// Portería rival: z > 0 (positivo)
 void avoidPenaltyAreas(float& x, float& z, const Penalty& p, const Field& f) {
     const float safeRadius = p.robotRadius + p.safetyMargin;
     const float safeHalfWidth = p.halfWidth + safeRadius;
     
     // ÁREA PENAL PROPIA (z negativo, cerca de -halfZ)
-    // Si estoy en el rango X del área penal Y muy cerca del borde negativo Z
     if (std::abs(x) < safeHalfWidth && z < -(f.halfZ - p.depth - safeRadius)) {
         // Estoy dentro o muy cerca del área penal propia
         // Opción 1: Sacar hacia afuera en Z (alejarse de la portería)
@@ -46,7 +43,6 @@ void avoidPenaltyAreas(float& x, float& z, const Penalty& p, const Field& f) {
     }
     
     // ÁREA PENAL RIVAL (z positivo, cerca de +halfZ)
-    // Si estoy en el rango X del área penal Y muy cerca del borde positivo Z
     if (std::abs(x) < safeHalfWidth && z > (f.halfZ - p.depth - safeRadius)) {
         // Estoy dentro o muy cerca del área penal rival
         // Sacar hacia afuera en Z (alejarse de la portería rival)

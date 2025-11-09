@@ -13,10 +13,13 @@
 
 #define DEG_TO_RAD (3.1415926535F / 180.0F)
 
-#define areaInferioirBoundaryX -145.5
+#define areaInferiorBoundaryX -145.5
 #define areaSuperiorBoundaryX -(145.5 -25)
-#define areaInferioirBoundaryZ -40
+#define areaInferiorBoundaryZ -40
 #define areaSuperiorBoundaryZ 40
+
+#define areaCentreZ 0
+#define areaCentreX -(145 - 12.5)
 
 #define GOALKEEPER 'g'
 #define GOALIE 'p'
@@ -193,6 +196,27 @@ bool ballOutsideArea(float position, char axis)
     }
 }
 
+void centreGoalKeeper (const objectState_t &goalKeeper)
+{
+    json sampleMessage = {
+            {"type", "set"},
+            {"data",
+                {
+                    {"homeBot2",
+                        {
+                            {"positionXZ", {areaCentreX, areaCentreZ}},
+                            {"rotationY", 0},
+                            {"dribbler", 1}
+                        }
+                    }
+                }
+            }
+        };
+
+        
+    cout << sampleMessage.dump() << endl;
+    cerr << "Updated homeBot2 centre." << endl;
+}
 
 void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goalKeeper)
 {
@@ -288,7 +312,10 @@ int main(int argc, char *argv[])
 
             string type = message["type"];
             if (type == "start")
+            {
                 isRunning = true;
+                centrGoalKeeper(goalKeeper);
+            }
             else if (type == "stop")
                 isRunning = false;
             else if (type == "state")
