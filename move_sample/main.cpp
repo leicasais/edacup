@@ -104,11 +104,9 @@ int main(int argc, char *argv[])
                      // Moves robot every two seconds
                     if (time == 0)
                         poseHomeBot1(-0.9, 0.0, -90 * DEG_TO_RAD);
-                        poseHomeBot2(message);
                     }
                     else if (time == 40){
                         poseHomeBot1(-0.09, 0.0, -90 * DEG_TO_RAD);
-                        poseHomeBot2(message);
                     }
                     time++;
                     if (time >= 80)
