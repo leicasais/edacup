@@ -162,7 +162,7 @@ bool ballOutsideArea (float position, char axis)
 }
 
 
-/*
+
 void goalKeepeTracking(const objectState_t &ballState, const objectState_t &goalKeeper)
 {
     float newGKPosition[2];
@@ -213,7 +213,7 @@ void goalKeepeTracking(const objectState_t &ballState, const objectState_t &goal
 
     // cerr prints to debug console
     cerr << "Updated homeBot2 defense." << endl;
-}*/
+}
 
 int main(int argc, char *argv[])
 {
