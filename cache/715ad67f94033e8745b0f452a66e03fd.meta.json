@@ -8,12 +8,12 @@
     "connection": "Upgrade, Keep-Alive",
     "content-length": "340372",
     "content-type": "model/gltf-binary",
-    "date": "Sat, 08 Nov 2025 21:11:22 GMT",
+    "date": "Sun, 09 Nov 2025 21:25:22 GMT",
     "etag": "\"53194-64254fa0b6200\"",
     "keep-alive": "timeout=5, max=100",
     "last-modified": "Thu, 30 Oct 2025 00:03:20 GMT",
     "server": "Apache/2.4.58 (Ubuntu)",
     "upgrade": "h2"
   },
-  "cachedAt": 1762636283842
+  "cachedAt": 1762723526764
 }

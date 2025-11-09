@@ -77,8 +77,8 @@ void chaseBall(const objectState_t &ballState, const Field f, const Penalty p)
     float positionX = ballState.position[0];
     float positionZ = ballState.position[2];
 
-    clampToField(positionX, positionZ, f);
     avoidPenaltyAreas(positionX, positionZ, p, f);
+    clampToField(positionX, positionZ, f);
 
     json sampleMessage = {
         {"type", "set"},
