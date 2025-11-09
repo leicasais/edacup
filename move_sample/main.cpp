@@ -175,19 +175,6 @@ void poseHomeBot1(float positionX, float positionZ, float rotationY)
 }
 
 
-bool ballOutsideArea(float position, char axis)
-{
-    switch (axis)
-    {
-        case 'Z':
-            return !(position < areaSuperiorBoundaryZ && position > areaInferiorBoundaryZ);
-        case 'X':
-            return !(position < areaSuperiorBoundaryX && position > areaInferiorBoundaryX);
-        default:
-            return false;
-    }
-}
-
 void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goalKeeper, const Field& f, const Penalty& p)
 {
     float newGKPosition[2];
@@ -282,7 +269,6 @@ int main(int argc, char *argv[])
             if (type == "start")
             {
                 isRunning = true;
-                centrGoalKeeper(goalKeeper);
             }
             else if (type == "stop")
                 isRunning = false;
@@ -293,7 +279,7 @@ int main(int argc, char *argv[])
                     trackObject(ball, BALL, message);              
                     trackObject(goalKeeper, GOALKEEPER, message);     
                     chaseBall(ball,f,p);
-                    goalKeeperTracking(ball, goalKeeper);
+                    goalKeeperTracking(ball, goalKeeper, f, p);
                     goalieControlFacingGoal(message, 0.0f, +0.9f);
 
                 }
