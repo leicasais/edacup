@@ -1,1 +1,1 @@
-/usr/bin/c++ -g CMakeFiles/move_sample.dir/main.cpp.o -o move_sample 
+/usr/bin/c++ -g CMakeFiles/move_sample.dir/colision.cpp.o CMakeFiles/move_sample.dir/main.cpp.o -o move_sample 

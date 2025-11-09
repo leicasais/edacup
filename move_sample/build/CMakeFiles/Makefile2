@@ -81,12 +81,12 @@ clean: CMakeFiles/move_sample.dir/clean
 CMakeFiles/move_sample.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/move_sample.dir/build.make CMakeFiles/move_sample.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/move_sample.dir/build.make CMakeFiles/move_sample.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/solchu/EDA/edacup/move_sample/build/CMakeFiles --progress-num=1,2 "Built target move_sample"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/solchu/EDA/edacup/move_sample/build/CMakeFiles --progress-num=1,2,3 "Built target move_sample"
 .PHONY : CMakeFiles/move_sample.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/move_sample.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/solchu/EDA/edacup/move_sample/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/solchu/EDA/edacup/move_sample/build/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/move_sample.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/solchu/EDA/edacup/move_sample/build/CMakeFiles 0
 .PHONY : CMakeFiles/move_sample.dir/rule

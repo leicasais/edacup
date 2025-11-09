@@ -1,6 +1,12 @@
 [
 {
   "directory": "/home/solchu/EDA/edacup/move_sample/build",
+  "command": "/usr/bin/c++   -g -std=gnu++20 -o CMakeFiles/move_sample.dir/colision.cpp.o -c /home/solchu/EDA/edacup/move_sample/colision.cpp",
+  "file": "/home/solchu/EDA/edacup/move_sample/colision.cpp",
+  "output": "CMakeFiles/move_sample.dir/colision.cpp.o"
+},
+{
+  "directory": "/home/solchu/EDA/edacup/move_sample/build",
   "command": "/usr/bin/c++   -g -std=gnu++20 -o CMakeFiles/move_sample.dir/main.cpp.o -c /home/solchu/EDA/edacup/move_sample/main.cpp",
   "file": "/home/solchu/EDA/edacup/move_sample/main.cpp",
   "output": "CMakeFiles/move_sample.dir/main.cpp.o"

@@ -35,38 +35,49 @@ typedef struct{
 }objectState_t;
 
 
-void trackObject(objectState_t &objectState, char object, const json &message) {
-    switch (object)
+void trackObject(objectState_t &objectState, char objectType, const json &message) {
+
+    std::string key;
+
+    switch (objectType)
     {
-        case BALL: 
-            const auto &object = message["data"]["ball"];
+        case BALL:
+            key = "ball";
             break;
         case GOALIE:
-            const auto &object = message["data"]["homeBot1"];
+            key = "homeBot1";
             break;
         case GOALKEEPER:
-            const auto &object = message["data"]["homeBot2"];
+            key = "homeBot2";
             break;
+        default:
+            return; // o tirar error
     }
 
-    objectState.position[0] = ball["position"][0];
-    objectState.position[1] = ball["position"][1];
-    objectState.position[2] = ball["position"][2];
+    const auto &jobj = message["data"][key];
 
-    objectState.rotation[0] = ball["rotation"][0];
-    objectState.rotation[1] = ball["rotation"][1];
-    objectState.rotation[2] = ball["rotation"][2];
+    // pos
+    objectState.position[0] = jobj["position"][0];
+    objectState.position[1] = jobj["position"][1];
+    objectState.position[2] = jobj["position"][2];
 
-    objectState.velocity[0] = ball["velocity"][0];
-    objectState.velocity[1] = ball["velocity"][1];
-    objectState.velocity[2] = ball["velocity"][2];
+    // rot
+    objectState.rotation[0] = jobj["rotation"][0];
+    objectState.rotation[1] = jobj["rotation"][1];
+    objectState.rotation[2] = jobj["rotation"][2];
 
-    objectState.angularVelocity[0] = ball["angularVelocity"][0];
-    objectState.angularVelocity[1] = ball["angularVelocity"][1];
-    objectState.angularVelocity[2] = ball["angularVelocity"][2];
+    // vel
+    objectState.velocity[0] = jobj["velocity"][0];
+    objectState.velocity[1] = jobj["velocity"][1];
+    objectState.velocity[2] = jobj["velocity"][2];
+
+    // ang vel
+    objectState.angularVelocity[0] = jobj["angularVelocity"][0];
+    objectState.angularVelocity[1] = jobj["angularVelocity"][1];
+    objectState.angularVelocity[2] = jobj["angularVelocity"][2];
 }
 
-void chaseBall(const ballState_t &ballState, const Field f)
+void chaseBall(const objectState_t &ballState, const Field f)
 {
     // Implement chasing logic here
     // For example, calculate the direction to the ball and set robot velocities accordingly
@@ -82,7 +93,7 @@ void chaseBall(const ballState_t &ballState, const Field f)
              "homeBot1",
              {
                  {"positionXZ", {positionX, positionZ}},
-                 {"dribbler", 1}
+                 {"dribbler", 1},
                  {"kicker", 1}
              },
          }}},
@@ -151,13 +162,15 @@ bool ballOutsideArea (float position, char axis)
 }
 
 
-
+/*
 void goalKeepeTracking(const objectState_t &ballState, const objectState_t &goalKeeper)
 {
     float newGKPosition[2];
 
     float GKpositionX = ballState.position[0];
     float GKpositionZ = ballState.position[2];
+
+    json sampleMessage;
 
     if(ballOutsideArea(ballState))
     {
@@ -166,7 +179,7 @@ void goalKeepeTracking(const objectState_t &ballState, const objectState_t &goal
     }
     if(GKBallDistance[0] < 1.0f && GKBallDistance[2] < 1.0f)
     {
-        json sampleMessage = {
+        sampleMessage = {
             {"type", "set"},
             {"data",
             {{
@@ -181,7 +194,7 @@ void goalKeepeTracking(const objectState_t &ballState, const objectState_t &goal
     }
     else
     {
-        json sampleMessage = {
+        sampleMessage = {
             {"type", "set"},
             {"data",
             {{
@@ -200,7 +213,7 @@ void goalKeepeTracking(const objectState_t &ballState, const objectState_t &goal
 
     // cerr prints to debug console
     cerr << "Updated homeBot2 defense." << endl;
-}
+}*/
 
 int main(int argc, char *argv[])
 {
@@ -241,6 +254,7 @@ int main(int argc, char *argv[])
                 if (isRunning)
                 {
                     trackObject(ball, BALL, message);                     // Moves robot every two seconds
+                    chaseBall(ball, Field());
                 }
             }
         }
