@@ -94,7 +94,7 @@ void chaseBall(const objectState_t &ballState, const Field f)
              {
                  {"positionXZ", {positionX, positionZ}},
                  {"dribbler", 1},
-                 {"kicker", 1}
+                 {"kick", 1}
              },
          }}},
     };
@@ -130,61 +130,59 @@ void poseHomeBot1(float positionX, float positionZ, float rotationY)
 }
 
 
-bool ballOutsideArea (float position, char axis)
+bool ballOutsideArea(float position, char axis)
 {
     switch (axis)
     {
         case 'Z':
-            if(position < areaSuperiorBoundaryZ && position > areaInferioirBoundaryZ)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-            break;
+            return !(position < areaSuperiorBoundaryZ && position > areaInferiorBoundaryZ);
         case 'X':
-            if(position < areaSuperiorBoundaryX && position > areaInferioirBoundaryX)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
-            break;
+            return !(position < areaSuperiorBoundaryX && position > areaInferiorBoundaryX);
         default:
             return false;
-            break;
     }
 }
 
 
-
-void goalKeepeTracking(const objectState_t &ballState, const objectState_t &goalKeeper)
+void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goalKeeper)
 {
     float newGKPosition[2];
 
-    float GKpositionX = ballState.position[0];
-    float GKpositionZ = ballState.position[2];
+    float ballPositionX = ballState.position[0];
+    float ballPositionZ = ballState.position[2];
+
+    float GKPositionX = goalKeeper.position[0];
+    float GKPositionZ = goalKeeper.position[2];
+
+    float GKBallDistanceX = fabs(GKPositionX - ballPositionX);
+    float GKBallDistanceZ = fabs(GKPositionZ - ballPositionZ);
+
+    // X
+    newGKPosition[0] = ballOutsideArea(ballPositionX, 'X')
+                        ? areaSuperiorBoundaryX
+                        : ballPositionX;
+    // Z
+    newGKPosition[1] = ballOutsideArea(ballPositionZ, 'Z')
+                        ? areaSuperiorBoundaryZ
+                        : ballPositionZ;
 
     json sampleMessage;
 
-    if(GKBallDistance[0] < 1.0f && GKBallDistance[2] < 1.0f)
+    if(GKBallDistanceX < 1.0f && GKBallDistanceZ < 1.0f)
     {
         sampleMessage = {
             {"type", "set"},
             {"data",
-            {{
-                "homeBot2",
                 {
-                    {"positionXZ", {newGKPosition[0]}, newGKPosition[2]}},
-                    {"rotationY", {newGKPosition[2]}},
-                    {"dribbler", 1}
-                },
-            }},
+                    {"homeBot2",
+                        {
+                            {"positionXZ", {newGKPosition[0], newGKPosition[1]}},
+                            {"rotationY", 0},
+                            {"dribbler", 1}
+                        }
+                    }
+                }
+            }
         };
     }
     else
@@ -192,21 +190,20 @@ void goalKeepeTracking(const objectState_t &ballState, const objectState_t &goal
         sampleMessage = {
             {"type", "set"},
             {"data",
-            {{
-                "homeBot2",
                 {
-                    {"positionXZ", {newGKPosition[0]}, newGKPosition[2]}},
-                    {"rotationY", {newGKPosition[2]}},
-                    {"kicker", 1}
-                },
-            }},
+                    {"homeBot2",
+                        {
+                            {"positionXZ", {newGKPosition[0], newGKPosition[1]}},
+                            {"rotationY", 0},
+                            {"kick", 1}
+                        }
+                    }
+                }
+            }
         };
     }
 
-    // cout connects to server
     cout << sampleMessage.dump() << endl;
-
-    // cerr prints to debug console
     cerr << "Updated homeBot2 defense." << endl;
 }
 
@@ -248,8 +245,10 @@ int main(int argc, char *argv[])
             {
                 if (isRunning)
                 {
-                    trackObject(ball, BALL, message);                     // Moves robot every two seconds
+                    trackObject(ball, BALL, message);              
+                    trackObject(goalKeeper, GOALKEEPER, message);     
                     chaseBall(ball, Field());
+                    goalKeeperTracking(ball, goalKeeper);
                 }
             }
         }
