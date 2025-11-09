@@ -17,7 +17,7 @@ struct Field {
 
 // Áreas de penalti: 25 cm de ancho (±12.5 desde centro) y 80 cm de largo
 struct Penalty {
-    float Width = 0.25;  // largo en x de cda porteria
+    float width = 0.25;  // largo en x de cda porteria
     float depth = 0.8;             // 80 cm de profundidad desde la portería
     float robotRadius = 0.09;     
     float safetyMargin = 0.01;

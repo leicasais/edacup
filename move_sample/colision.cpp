@@ -11,23 +11,30 @@ void clampToField(float& x, float& z, const Field& f) {
 }
 
 // Evita que el robot entre en CUALQUIERA de las dos áreas penales
+void avoidPenaltyAreas(float& x, float& z, const Penalty& p, const Field& f)
+{
+    const float safe = p.robotRadius + p.safetyMargin;
 
-void avoidPenaltyAreas(float& x, float& z, const Penalty& p, const Field& f) {
-    const float safeRadius = p.robotRadius + p.safetyMargin;
-    const float safeWidth = p.Width + safeRadius;
-    const float safeDeph = p.depth +safeRadius;
+    const float halfD = p.depth * 0.5f;
 
-    //mitad de abajo de arco rival y propio
-    if (std::abs(x) > (f.halfX - safeWidth) && abs(z) < (p.depth /2 - safeDeph)) {
-        if(z < p.depth /2 - safeDeph && z > 0)
-            z = p.depth/2 + safeDeph;
-        else if(z > -(p.depth /2 - safeDeph) && z < 0)
-            z = -(p.depth/2 + safeDeph);
+    // derecha (arco rival)
+    float leftLimitR  =  f.halfX - p.width - safe;   // lado izquierdo del area rival
+    float rightLimitR =  f.halfX + safe;             // pared absoluta, no deberías llegar igual
 
-        if (x > (f.halfX - safeWidth))   
-            x = f.halfX - safeWidth;
-        else if (x < -(f.halfX - safeWidth))
-            x = -(f.halfX - safeWidth);   
+    // izquierda (arco propio)
+    float leftLimitL  = -f.halfX - safe;             // pared absoluta
+    float rightLimitL = -f.halfX + p.width + safe;   // lado derecho del area propia
+
+    // área rival
+    if (x > leftLimitR && x < rightLimitR && fabs(z) < halfD + safe)
+    {
+        x = leftLimitR;
     }
 
+    // área propia
+    if (x < rightLimitL && x > leftLimitL && fabs(z) < halfD + safe)
+    {
+        x = rightLimitL;
+    }
 }
+
