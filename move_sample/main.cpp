@@ -111,7 +111,6 @@ int main(int argc, char *argv[])
                     time++;
                     if (time >= 80)
                         time = 0;
-                }
             }
         }
         catch (exception &error)
