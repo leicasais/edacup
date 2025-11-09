@@ -41,7 +41,34 @@ void trackBall(ballState_t &ballState, const json &message) {
     ballState.angularVelocity[2] = ball["angularVelocity"][2];
 }
 
+void chaseBall(const ballState_t &ballState)
+{
+    // Implement chasing logic here
+    // For example, calculate the direction to the ball and set robot velocities accordingly
 
+    float positionX = ballState.position[0];
+    float positionZ = ballState.position[2];
+
+    json sampleMessage = {
+        {"type", "set"},
+        {"data",
+         {{
+             "homeBot1",
+             {
+                 {"positionXZ", {positionX, positionZ}},
+                 {"dribbler", 1}
+             },
+         }}},
+    };
+
+    // cout connects to server
+    cout << sampleMessage.dump() << endl;
+
+    // cerr prints to debug console
+    cerr << "Updated homeBot1 pose." << endl;
+
+
+}
 void poseHomeBot1(float positionX, float positionZ, float rotationY)
 {
     json sampleMessage = {
@@ -103,14 +130,11 @@ int main(int argc, char *argv[])
                     trackBall(ball, message);
                      // Moves robot every two seconds
                     if (time == 0)
-                        poseHomeBot1(-0.9, 0.0, -90 * DEG_TO_RAD);
-                    }
-                    else if (time == 40){
-                        poseHomeBot1(-0.09, 0.0, -90 * DEG_TO_RAD);
-                    }
+                        chaseBall(ball);
                     time++;
-                    if (time >= 80)
+                    if (time >= 50)
                         time = 0;
+                }
             }
         }
         catch (exception &error)
@@ -118,6 +142,6 @@ int main(int argc, char *argv[])
             // cerr prints to debug console
             cerr << error.what() << endl;
         }
-    }
+     }
 }
 
