@@ -27,57 +27,6 @@ typedef struct{
     float angularVelocity[3];
 }objectState_t;
 
-// ===== NUEVO (Datasheet): Arquero que se mantiene en linea de arco, sigue X y patea al arco =====
-void goalieControlFacingGoal(const json& message, float oppGoalX, float oppGoalZ)
-{
-    static bool initialized = false;
-    static float goalLineZ = 0.0f;
-
-    const auto& data = message["data"];
-
-    // Estado (Datasheet): position = [x, y, z], rotation = [x, y, z]
-    float bx = data["ball"]["position"][0];
-    float bz = data["ball"]["position"][2];
-    float rx = data["homeBot1"]["position"][0];
-    float rz = data["homeBot1"]["position"][2];
-
-    if (!initialized) { goalLineZ = rz; initialized = true; } // fijar linea del arco una sola vez
-
-    // 1) Mantenerse en la linea del arco y seguir X de la pelota
-    float targetX = bx;
-    float targetZ = goalLineZ;
-
-    // 2) Orientarse al centro del arco rival
-    //    Convencion asumida: rotationY=0 mira hacia +Z. Ajustar si tu sim difiere.
-    float dirX = oppGoalX - rx;
-    float dirZ = oppGoalZ - rz;
-    float yaw  = std::atan2(dirX, dirZ);
-
-    // 3) Patear si la pelota esta cerca
-    float dx = bx - rx, dz = bz - rz;
-    float dist2 = dx*dx + dz*dz;
-    float kick = (dist2 < (0.12f*0.12f)) ? 1.0f : 0.0f;
-
-    // 4) Enviar "set" (estructura del Datasheet)
-    json setMsg = {
-        {"type", "set"},
-        {"data", {
-            {
-                "homeBot1", {
-                    {"positionXZ", {targetX, targetZ}},
-                    {"rotationY",  yaw},
-                    {"dribbler",   1},
-                    {"kick",       kick}
-                }
-            }
-        }}
-    };
-
-    std::cout << setMsg.dump() << std::endl;
-    std::cerr << "Goalie(Face&Kick) -> X:" << targetX << " Z:" << targetZ << " yaw:" << yaw << " kick:" << kick << std::endl;
-}
-
-
 
 void trackObject(objectState_t &objectState, char objectType, const json &message) {
 
@@ -193,11 +142,11 @@ void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goa
     newGKPosition[1] = ballPositionZ;
     
     // Mantener al arquero DENTRO de su área penal
-    keepInOwnPenaltyArea(newGKPosition[0], newGKPosition[1], p, f);
+    avoidPenaltyAreas(newGKPosition[0], newGKPosition[1], p, f);
 
     json sampleMessage;
 
-    if(GKBallDistanceX < 1.0f && GKBallDistanceZ < 1.0f)
+    if(GKBallDistanceX > 0.05f && GKBallDistanceZ > 0.05f)
     {
         sampleMessage = {
             {"type", "set"},
@@ -280,7 +229,6 @@ int main(int argc, char *argv[])
                     trackObject(goalKeeper, GOALKEEPER, message);     
                     chaseBall(ball,f,p);
                     goalKeeperTracking(ball, goalKeeper, f, p);
-                    //goalieControlFacingGoal(message, 0.0f, +0.9f);
 
                 }
             }

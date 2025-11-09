@@ -11,7 +11,7 @@
 
 struct Field {
     float halfX = 2.09 / 2.0; // eje largo (109.5 cm)
-    float halfZ = 1.48 / 2.0/; // eje corto (79 cm)
+    float halfZ = 1.48 / 2.0; // eje corto (79 cm)
     float safety = 0.09 + 0.01;  // radio robot (9cm) + 1 cm extra
 };
 
