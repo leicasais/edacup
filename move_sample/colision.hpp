@@ -26,4 +26,7 @@ struct Penalty {
 void keepInOwnPenaltyArea(float& x, float& z, const Penalty& p, const Field& f);
 void clampToField(float& x, float& z, const Field& f);
 void avoidPenaltyAreas(float& x, float& z, const Penalty& p, const Field& f);
+bool nearArea( float x, float z, const Penalty& p, const Field& f);
+int nearBorderZ(float z, const Field f);
+int nearBorderX(float x, const Field f);
 #endif // COLISION_HPP

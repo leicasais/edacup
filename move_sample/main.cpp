@@ -16,6 +16,8 @@
 #define GOALKEEPER 'g'
 #define GOALIE 'p'
 #define BALL 'b'
+#define RIVAL1 '1'
+#define RIVAL2 '2'
 
 using namespace std;    
 using json = nlohmann::json;
@@ -42,6 +44,12 @@ void trackObject(objectState_t &objectState, char objectType, const json &messag
             break;
         case GOALKEEPER:
             key = "homeBot2";
+            break;
+        case RIVAL1:
+            key = "rivalBot1";
+            break;
+        case RIVAL2:
+            key = "rivalBot2";
             break;
         default:
             return; // o tirar error
@@ -70,28 +78,102 @@ void trackObject(objectState_t &objectState, char objectType, const json &messag
     objectState.angularVelocity[2] = jobj["angularVelocity"][2];
 }
 
-void chaseBall(const objectState_t &ballState, const Field f, const Penalty p)
+bool nearRival(const objectState_t& ballState, const json &message)
+{
+    objectState_t rival1;
+    trackObject(rival1, RIVAL1, message);
+    objectState_t rival2;
+    trackObject(rival2, RIVAL2, message);
+
+    float distanceToRival1 = sqrt(pow(ballState.position[0] - rival1.position[0], 2) +
+                                 pow(ballState.position[2] - rival1.position[2], 2));
+    float distanceToRival2 = sqrt(pow(ballState.position[0] - rival2.position[0], 2) +
+                                    pow(ballState.position[2] - rival2.position[2], 2));
+    
+    if(distanceToRival1 < 0.2f || distanceToRival2 < 0.2f)
+        return true;
+    else
+        return false;
+
+
+}
+
+void chaseBall(const objectState_t &ballState, const Field f, const Penalty p, const json &message)
 {
     // Implement chasing logic here
     // For example, calculate the direction to the ball and set robot velocities accordingly
     float positionX = ballState.position[0];
     float positionZ = ballState.position[2];
 
+    float kickVal = 1.0f;
+    float rotateY = 0.0f;
+    float chirpVal = 1.0f;
+
     avoidPenaltyAreas(positionX, positionZ, p, f);
     clampToField(positionX, positionZ, f);
 
+
+    if(nearArea(positionX, positionZ, p, f))
+    {
+        kickVal = 1.0f;
+    }
+    else
+    {
+         kickVal = 0.0f;
+    }
+
+    if(int n = nearBorderX(positionX, f))
+    {
+        if(n == 1)
+        {
+            rotateY += 180 * DEG_TO_RAD;
+        }
+        else if (n == -1)
+        {
+            rotateY +=  180 * DEG_TO_RAD;
+        }
+
+    }
+    else
+    {
+        rotateY = 0.0f;
+    }
+
+    if(int n = nearBorderZ(positionZ, f))
+    {
+        if(n == 1)
+        {
+            rotateY += 90 * DEG_TO_RAD;
+        }
+        else if (n == -1)
+        {
+            rotateY += -90 * DEG_TO_RAD;
+        }   
+    }
+
+    if (nearRival(ballState, message))
+    {
+        chirpVal = 0.5f;
+        kickVal = 0.5f;
+    }
+    {
+        chirpVal = 0.0f;
+    }
+
     json sampleMessage = {
-        {"type", "set"},
-        {"data",
-         {{
-             "homeBot1",
-             {
-                 {"positionXZ", {positionX, positionZ}},
-                 {"dribbler", 1},
-                 {"kick", 1}
-             },
-         }}},
-    };
+            {"type", "set"},
+            {"data",
+            {{
+                "homeBot1",
+                {
+                    {"positionXZ", {positionX, positionZ}},
+                    {"rotationY", rotateY},
+                    {"dribbler", 1},
+                    {"kick", kickVal},
+                    {"chirp", chirpVal}
+                },
+            }}},
+        };
 
     // cout connects to server
     cout << sampleMessage.dump() << endl;
@@ -101,28 +183,6 @@ void chaseBall(const objectState_t &ballState, const Field f, const Penalty p)
 
 
 }
-void poseHomeBot1(float positionX, float positionZ, float rotationY)
-{
-    json sampleMessage = {
-        {"type", "set"},
-        {"data",
-         {{
-             "homeBot1",
-             {
-                 {"positionXZ", {positionX, positionZ}},
-                 {"rotationY", rotationY},
-                 {"dribbler", 1}
-             },
-         }}},
-    };
-
-    // cout connects to server
-    cout << sampleMessage.dump() << endl;
-
-    // cerr prints to debug console
-    cerr << "Updated homeBot1 pose." << endl;
-}
-
 
 void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goalKeeper, const Field& f, const Penalty& p)
 {
@@ -137,11 +197,24 @@ void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goa
     float GKBallDistanceX = fabs(GKPositionX - ballPositionX);
     float GKBallDistanceZ = fabs(GKPositionZ - ballPositionZ);
 
-    // El arquero sigue la posición X de la pelota pero dentro del área penal
-    newGKPosition[0] = ballPositionX;
-    newGKPosition[1] = ballPositionZ;
-    
-    // Mantener al arquero DENTRO de su área penal
+     //(xmin, ymin) (xmax,ymax). obs x es igual para las dos
+    float linea_sup_arco[2][2] = {{-f.halfX +p.width-p.robotRadius-p.safetyMargin, -f.halfZ +p.depth-p.robotRadius-p.safetyMargin} ,
+    {-f.halfX +p.width-p.robotRadius-p.safetyMargin, f.halfZ -p.depth +p.robotRadius+p.safetyMargin}};
+
+    if(ballPositionX >= linea_sup_arco[0][0]){       //si la pelota esta lejos del area la sigue solo moviendose en la coordenada z
+        newGKPosition[0] = linea_sup_arco[0][0];
+        newGKPosition[1] = ballPositionZ;
+    }
+    else if (linea_sup_arco[0][1] <= ballPositionZ && linea_sup_arco[1][1] >= ballPositionZ){    //si la pelota esta en el intervalo del eje z correspondiente a las coordenadas del arco
+        newGKPosition[0] = linea_sup_arco[0][0];
+        newGKPosition[1] = ballPositionZ;
+    }
+    else{       //si la pelota esta muy cerca del area se empieza a mover en x y seguir a la pelota
+        newGKPosition[0] = ballPositionX;
+        newGKPosition[1] = ballPositionZ;
+    }
+
+    //corroboro que el robot no entre en el area del arco aunque la pelota este adentro
     avoidPenaltyAreas(newGKPosition[0], newGKPosition[1], p, f);
 
     json sampleMessage;
@@ -184,7 +257,6 @@ void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goa
     cout << sampleMessage.dump() << endl;
     cerr << "Updated homeBot2 defense." << endl;
 }
-
 int main(int argc, char *argv[])
 {
     bool isRunning = false;
@@ -227,7 +299,7 @@ int main(int argc, char *argv[])
                 {
                     trackObject(ball, BALL, message);              
                     trackObject(goalKeeper, GOALKEEPER, message);     
-                    chaseBall(ball,f,p);
+                    chaseBall(ball,f,p, message);
                     goalKeeperTracking(ball, goalKeeper, f, p);
 
                 }

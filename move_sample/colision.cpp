@@ -38,3 +38,41 @@ void avoidPenaltyAreas(float& x, float& z, const Penalty& p, const Field& f)
     }
 }
 
+bool nearArea( float x, float z, const Penalty& p, const Field& f)
+{
+    bool isXnear = (f.halfX - p.width - x < 0.1)?
+                    true: false;
+    bool isZnear = (abs(f.halfZ - p.depth/2 - z) < 0.1)?
+                    true: false;
+    return (isXnear || isZnear);
+}
+
+int nearBorderX(float x, const Field f)
+{
+    float borderRight = f.halfX - 0.1f;
+    float borderLeft  = -f.halfX + 0.1f;
+
+    if (x > borderRight)
+        return 1;   // near top border
+    else if (x < borderLeft)
+        return -1;  // near bottom border
+    else
+        return 0;   // not near borders
+}
+
+int nearBorderZ(float z, const Field f)
+{
+    float borderTop    = f.halfZ - 0.1f;
+    float borderBottom = -f.halfZ + 0.1f;
+
+    if (z > borderTop)
+        return 1;   // near left border
+    else if (z < borderBottom)
+        return -1;  // near right border
+    else
+        return 0;   // not near borders
+}
+
+
+
+
