@@ -129,6 +129,30 @@ move_sample/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/move_sample.dir/build.make CMakeFiles/move_sample.dir/build
 .PHONY : move_sample/fast
 
+colision.o: colision.cpp.o
+.PHONY : colision.o
+
+# target to build an object file
+colision.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/move_sample.dir/build.make CMakeFiles/move_sample.dir/colision.cpp.o
+.PHONY : colision.cpp.o
+
+colision.i: colision.cpp.i
+.PHONY : colision.i
+
+# target to preprocess a source file
+colision.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/move_sample.dir/build.make CMakeFiles/move_sample.dir/colision.cpp.i
+.PHONY : colision.cpp.i
+
+colision.s: colision.cpp.s
+.PHONY : colision.s
+
+# target to generate assembly for a file
+colision.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/move_sample.dir/build.make CMakeFiles/move_sample.dir/colision.cpp.s
+.PHONY : colision.cpp.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -162,6 +186,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... move_sample"
+	@echo "... colision.o"
+	@echo "... colision.i"
+	@echo "... colision.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

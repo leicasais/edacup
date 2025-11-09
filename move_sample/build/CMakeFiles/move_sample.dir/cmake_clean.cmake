@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/move_sample.dir/colision.cpp.o"
+  "CMakeFiles/move_sample.dir/colision.cpp.o.d"
   "CMakeFiles/move_sample.dir/main.cpp.o"
   "CMakeFiles/move_sample.dir/main.cpp.o.d"
   "move_sample"
