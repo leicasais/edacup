@@ -13,18 +13,16 @@
 
 #define DEG_TO_RAD (3.1415926535F / 180.0F)
 
-#define areaInferioirBoundaryX 183 - 39
-#define areaSuperiorBoundaryX 183 - 119
-#define centreAreaBoundaryX 79
-#define areaInferioirBoundaryZ 219
-#define areaSuperiorBoundaryZ 219 - 25
-#define centreAreaBoundaryZ 12.5
+#define areaInferioirBoundaryX -145.5
+#define areaSuperiorBoundaryX -(145.5 -25)
+#define areaInferioirBoundaryZ -40
+#define areaSuperiorBoundaryZ 40
 
 #define GOALKEEPER 'g'
 #define GOALIE 'p'
 #define BALL 'b'
 
-using namespace std;
+using namespace std;    
 using json = nlohmann::json;
 
 typedef struct{
@@ -221,8 +219,6 @@ int main(int argc, char *argv[])
 
     while (true)
     {
-        // Try-catch allows intercepting errors.
-        // On error, the catch block is executed.
         try
         {
             string line;
