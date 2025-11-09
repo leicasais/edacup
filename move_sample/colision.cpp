@@ -17,7 +17,7 @@ void avoidPenaltyAreas(float& x, float& z, const Penalty& p, const Field& f) {
     const float safeWidth = p.Width + safeRadius;
     
     //mitad de abajo de arco rival y propio
-    if (!(std::abs(x) > f.halfX - safeWidth && abs(z) > p.depth /2 + safeRadius)) {
+    if (!(std::abs(x) > (f.halfX - safeWidth) && abs(z) < (p.depth /2 + safeRadius))) {
         if(z < p.depth /2)
             z = p.depth/2 + safeRadius;
         else

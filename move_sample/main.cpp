@@ -1,5 +1,15 @@
 // EDACup example
+#ifndef LIBS
+#define LIBS
+#include <exception>
+#include <cmath>
+#include <iostream>
+#include <string>
+#endif
 #include "colision.hpp"
+
+
+#include <nlohmann/json.hpp>
 
 #define DEG_TO_RAD (3.1415926535F / 180.0F)
 
@@ -269,7 +279,7 @@ int main(int argc, char *argv[])
                     trackObject(ball, BALL, message);              
                     trackObject(goalKeeper, GOALKEEPER, message);     
                     chaseBall(ball,f,p);
-                    goalKeeperTracking(ball, goalKeeper, f, p);
+                    //goalKeeperTracking(ball, goalKeeper, f, p);
                     goalieControlFacingGoal(message, 0.0f, +0.9f);
 
                 }

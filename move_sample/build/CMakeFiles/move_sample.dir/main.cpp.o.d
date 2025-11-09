@@ -180,7 +180,7 @@ CMakeFiles/move_sample.dir/main.cpp.o: \
  /usr/include/c++/13/bits/basic_ios.tcc \
  /usr/include/c++/13/bits/ostream.tcc /usr/include/c++/13/istream \
  /usr/include/c++/13/bits/istream.tcc \
- /home/solchu/EDA/edacup/move_sample/colision.cpp \
+ /home/solchu/EDA/edacup/move_sample/colision.hpp \
  /usr/include/nlohmann/json.hpp /usr/include/c++/13/algorithm \
  /usr/include/c++/13/bits/stl_algo.h \
  /usr/include/c++/13/bits/algorithmfwd.h \

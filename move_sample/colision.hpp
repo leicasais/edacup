@@ -1,3 +1,5 @@
+#ifndef COLISION_HPP
+#define COLISION_HPP
 #ifndef LIBS
 #define LIBS
 #include <exception>
@@ -24,3 +26,4 @@ struct Penalty {
 void keepInOwnPenaltyArea(float& x, float& z, const Penalty& p, const Field& f);
 void clampToField(float& x, float& z, const Field& f);
 void avoidPenaltyAreas(float& x, float& z, const Penalty& p, const Field& f);
+#endif // COLISION_HPP
