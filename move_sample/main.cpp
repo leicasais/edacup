@@ -77,7 +77,7 @@ void trackObject(objectState_t &objectState, char objectType, const json &messag
     objectState.angularVelocity[2] = jobj["angularVelocity"][2];
 }
 
-void chaseBall(const objectState_t &ballState, const Field f)
+void chaseBall(const objectState_t &ballState, const Field f, const Penalty p)
 {
     // Implement chasing logic here
     // For example, calculate the direction to the ball and set robot velocities accordingly
@@ -85,6 +85,7 @@ void chaseBall(const objectState_t &ballState, const Field f)
     float positionZ = ballState.position[2];
 
     clampToField(positionX, positionZ, f);
+    Penalty_out(positionX, positionZ, p);
 
     json sampleMessage = {
         {"type", "set"},
@@ -211,6 +212,8 @@ int main(int argc, char *argv[])
 {
     bool isRunning = false;
     uint32_t time = 0;
+    Penalty p;
+    Field f;
     objectState_t ball;
     objectState_t goalie;
     objectState_t goalKeeper;
@@ -247,7 +250,7 @@ int main(int argc, char *argv[])
                 {
                     trackObject(ball, BALL, message);              
                     trackObject(goalKeeper, GOALKEEPER, message);     
-                    chaseBall(ball, Field());
+                    chaseBall(ball,f,p);
                     goalKeeperTracking(ball, goalKeeper);
                 }
             }
