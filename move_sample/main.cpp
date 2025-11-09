@@ -32,6 +32,57 @@ typedef struct{
     float angularVelocity[3];
 }objectState_t;
 
+// ===== NUEVO (Datasheet): Arquero que se mantiene en linea de arco, sigue X y patea al arco =====
+void goalieControlFacingGoal(const json& message, float oppGoalX, float oppGoalZ)
+{
+    static bool initialized = false;
+    static float goalLineZ = 0.0f;
+
+    const auto& data = message["data"];
+
+    // Estado (Datasheet): position = [x, y, z], rotation = [x, y, z]
+    float bx = data["ball"]["position"][0];
+    float bz = data["ball"]["position"][2];
+    float rx = data["homeBot1"]["position"][0];
+    float rz = data["homeBot1"]["position"][2];
+
+    if (!initialized) { goalLineZ = rz; initialized = true; } // fijar linea del arco una sola vez
+
+    // 1) Mantenerse en la linea del arco y seguir X de la pelota
+    float targetX = bx;
+    float targetZ = goalLineZ;
+
+    // 2) Orientarse al centro del arco rival
+    //    Convencion asumida: rotationY=0 mira hacia +Z. Ajustar si tu sim difiere.
+    float dirX = oppGoalX - rx;
+    float dirZ = oppGoalZ - rz;
+    float yaw  = std::atan2(dirX, dirZ);
+
+    // 3) Patear si la pelota esta cerca
+    float dx = bx - rx, dz = bz - rz;
+    float dist2 = dx*dx + dz*dz;
+    float kick = (dist2 < (0.12f*0.12f)) ? 1.0f : 0.0f;
+
+    // 4) Enviar "set" (estructura del Datasheet)
+    json setMsg = {
+        {"type", "set"},
+        {"data", {
+            {
+                "homeBot1", {
+                    {"positionXZ", {targetX, targetZ}},
+                    {"rotationY",  yaw},
+                    {"dribbler",   1},
+                    {"kick",       kick}
+                }
+            }
+        }}
+    };
+
+    std::cout << setMsg.dump() << std::endl;
+    std::cerr << "Goalie(Face&Kick) -> X:" << targetX << " Z:" << targetZ << " yaw:" << yaw << " kick:" << kick << std::endl;
+}
+
+
 
 void trackObject(objectState_t &objectState, char objectType, const json &message) {
 
@@ -248,6 +299,8 @@ int main(int argc, char *argv[])
                     trackObject(goalKeeper, GOALKEEPER, message);     
                     chaseBall(ball,f,p);
                     goalKeeperTracking(ball, goalKeeper);
+                    goalieControlFacingGoal(message, 0.0f, +0.9f);
+
                 }
             }
         }
