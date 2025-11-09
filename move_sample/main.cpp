@@ -1,15 +1,5 @@
 // EDACup example
-#ifndef LIBS
-#define LIBS
-#include <exception>
-#include <cmath>
-#include <iostream>
-#include <string>
-#endif
-#include "colision.cpp"
-
-
-#include <nlohmann/json.hpp>
+#include "colision.hpp"
 
 #define DEG_TO_RAD (3.1415926535F / 180.0F)
 
