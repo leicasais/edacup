@@ -172,11 +172,6 @@ void goalKeepeTracking(const objectState_t &ballState, const objectState_t &goal
 
     json sampleMessage;
 
-    if(ballOutsideArea(ballState))
-    {
-        newGKPosition[0] = (areaSuperiorBoundaryX >= GKpositionX? GKpositionX : areaSuperiorBoundaryX);
-        newGKPosition[1] = (areaSuperiorBoundaryZ >= GKpositionZ? GKpositionZ : areaSuperiorBoundaryZ);
-    }
     if(GKBallDistance[0] < 1.0f && GKBallDistance[2] < 1.0f)
     {
         sampleMessage = {
