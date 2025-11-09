@@ -394,7 +394,6 @@ CMakeFiles/move_sample.dir/colision.cpp.o: /home/solchu/EDA/edacup/move_sample/c
   /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h
 
 CMakeFiles/move_sample.dir/main.cpp.o: /home/solchu/EDA/edacup/move_sample/main.cpp \
-  /home/solchu/EDA/edacup/move_sample/colision.cpp \
   /home/solchu/EDA/edacup/move_sample/colision.hpp \
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \

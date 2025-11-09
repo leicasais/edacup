@@ -10,17 +10,17 @@
 #endif
 
 struct Field {
-    float halfX = 219.0 / 2.0; // eje largo (109.5 cm)
-    float halfZ = 158.0 / 2.0; // eje corto (79 cm)
-    float safety = 9.0 + 1.0;  // radio robot (9cm) + 1 cm extra
+    float halfX = 2.09 / 2.0; // eje largo (109.5 cm)
+    float halfZ = 1.48 / 2.0/; // eje corto (79 cm)
+    float safety = 0.09 + 0.01;  // radio robot (9cm) + 1 cm extra
 };
 
 // Áreas de penalti: 25 cm de ancho (±12.5 desde centro) y 80 cm de largo
 struct Penalty {
-    float Width = 25.0;  // largo en x de cda porteria
-    float depth = 80.0;             // 80 cm de profundidad desde la portería
-    float robotRadius = 9.0;     
-    float safetyMargin = 1.0;
+    float Width = 0.25;  // largo en x de cda porteria
+    float depth = 0.8;             // 80 cm de profundidad desde la portería
+    float robotRadius = 0.09;     
+    float safetyMargin = 0.01;
 };
 
 void keepInOwnPenaltyArea(float& x, float& z, const Penalty& p, const Field& f);

@@ -279,8 +279,8 @@ int main(int argc, char *argv[])
                     trackObject(ball, BALL, message);              
                     trackObject(goalKeeper, GOALKEEPER, message);     
                     chaseBall(ball,f,p);
-                    //goalKeeperTracking(ball, goalKeeper, f, p);
-                    goalieControlFacingGoal(message, 0.0f, +0.9f);
+                    goalKeeperTracking(ball, goalKeeper, f, p);
+                    //goalieControlFacingGoal(message, 0.0f, +0.9f);
 
                 }
             }
