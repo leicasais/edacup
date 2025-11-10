@@ -78,22 +78,46 @@ void trackObject(objectState_t &objectState, char objectType, const json &messag
     objectState.angularVelocity[2] = jobj["angularVelocity"][2];
 }
 
-bool nearRival(const objectState_t& ballState, const json &message)
+float * nearRival(const objectState_t& ballState, float * temple,  const json &message)
 {
     objectState_t rival1;
     trackObject(rival1, RIVAL1, message);
     objectState_t rival2;
     trackObject(rival2, RIVAL2, message);
 
-    float distanceToRival1 = sqrt(pow(ballState.position[0] - rival1.position[0], 2) +
-                                 pow(ballState.position[2] - rival1.position[2], 2));
-    float distanceToRival2 = sqrt(pow(ballState.position[0] - rival2.position[0], 2) +
-                                    pow(ballState.position[2] - rival2.position[2], 2));
+    float distanceToRival1[] = {
+                               ballState.position[0] - rival1.position[0],
+                               ballState.position[2] - rival1.position[2]
+                            };
+    float distanceToRival2[] = {
+                               ballState.position[0] - rival2.position[0],
+                               ballState.position[2] - rival2.position[2]
+                            };
+
+    float eDistanceToRival1 = sqrt(pow(distanceToRival1[0], 2) +pow(distanceToRival1[1], 2));
+
+    float eDistanceToRival2 = sqrt((distanceToRival2[0], 2) +pow(distanceToRival2[1], 2));
     
-    if(distanceToRival1 < 0.2f || distanceToRival2 < 0.2f)
-        return true;
+    if(eDistanceToRival1 < 0.2f || eDistanceToRival2 < 0.2f){
+
+        if(distanceToRival1 < distanceToRival2)
+        {
+            temple[0] = distanceToRival1[0];
+            temple[1] = distanceToRival1[1];
+        }
+        else
+        {
+            temple[0] = distanceToRival2[0];
+            temple[1] = distanceToRival2[1];
+        }
+       
+    }
     else
-        return false;
+    {
+        temple = nullptr;
+    }
+
+    return temple;
 
 
 }
@@ -108,6 +132,8 @@ void chaseBall(const objectState_t &ballState, const Field f, const Penalty p, c
     float kickVal = 1.0f;
     float rotateY = 0.0f;
     float chirpVal = 1.0f;
+
+    float rivalDistance[2];
 
     avoidPenaltyAreas(positionX, positionZ, p, f);
     clampToField(positionX, positionZ, f);
@@ -151,11 +177,29 @@ void chaseBall(const objectState_t &ballState, const Field f, const Penalty p, c
         }   
     }
 
-    if (nearRival(ballState, message))
+    if (nearRival(ballState,rivalDistance, message))
     {
         chirpVal = 0.5f;
         kickVal = 0.5f;
+        if(rivalDistance[0] < 0)
+        {
+            positionX -= 0.1f;
+        }
+        else
+        {
+            positionX += 0.1f;
+        }
+
+        if(rivalDistance[1] < 0)
+        {
+            positionZ -= 0.1f;
+        }
+        else
+        {
+            positionX += 0.1f;
+        }
     }
+    else
     {
         chirpVal = 0.0f;
     }
@@ -183,6 +227,25 @@ void chaseBall(const objectState_t &ballState, const Field f, const Penalty p, c
 
 
 }
+void rotationSample(void)
+{
+    json sampleMessage = {
+            {"type", "set"},
+            {"data",
+            {{
+                "homeBot1",
+                {
+                    {"rotationY", 90 * DEG_TO_RAD},
+                },
+            }}},
+        };
+
+    // cout connects to server
+    cout << sampleMessage.dump() << endl;
+
+    // cerr prints to debug console
+    cerr << "Updated homeBot1 rotation." << endl;
+    }
 
 void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goalKeeper, const Field& f, const Penalty& p)
 {
@@ -201,7 +264,7 @@ void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goa
     float linea_sup_arco[2][2] = {{-f.halfX +p.width-p.robotRadius-p.safetyMargin, -f.halfZ +p.depth-p.robotRadius-p.safetyMargin} ,
     {-f.halfX +p.width-p.robotRadius-p.safetyMargin, f.halfZ -p.depth +p.robotRadius+p.safetyMargin}};
 
-    if(ballPositionX >= linea_sup_arco[0][0]){       //si la pelota esta lejos del area la sigue solo moviendose en la coordenada z
+    if(ballPositionX >= linea_sup_arco[0][0] && !(linea_sup_arco[0][1] <= ballPositionZ && linea_sup_arco[1][1] >= ballPositionZ)){       //si la pelota esta lejos del area la sigue solo moviendose en la coordenada z
         newGKPosition[0] = linea_sup_arco[0][0];
         newGKPosition[1] = ballPositionZ;
     }
