@@ -85,6 +85,7 @@ float * nearRival(const objectState_t& ballState, float * temple,  const json &m
     objectState_t rival2;
     trackObject(rival2, RIVAL2, message);
 
+<<<<<<< HEAD
     float distanceToRival1[] = {
                                ballState.position[0] - rival1.position[0],
                                ballState.position[2] - rival1.position[2]
@@ -97,6 +98,12 @@ float * nearRival(const objectState_t& ballState, float * temple,  const json &m
     float eDistanceToRival1 = sqrt(pow(distanceToRival1[0], 2) +pow(distanceToRival1[1], 2));
 
     float eDistanceToRival2 = sqrt((distanceToRival2[0], 2) +pow(distanceToRival2[1], 2));
+=======
+    float distanceToRival1 = sqrt(pow(ballState.position[0] - rival1.position[0], 2) +
+pow(ballState.position[2] - rival1.position[2], 2));
+    float distanceToRival2 = sqrt(pow(ballState.position[0] - rival2.position[0], 2) +
+                                    pow(ballState.position[2] - rival2.position[2], 2));
+>>>>>>> 27f4d7d48de714c9f7ea22384e5d65b3af2df1a7
     
     if(eDistanceToRival1 < 0.2f || eDistanceToRival2 < 0.2f){
 
@@ -133,6 +140,7 @@ void chaseBall(const objectState_t &ballState, const Field f, const Penalty p, c
     float rotateY = 0.0f;
     float chirpVal = 1.0f;
 
+<<<<<<< HEAD
     float rivalDistance[2];
 
     avoidPenaltyAreas(positionX, positionZ, p, f);
@@ -140,43 +148,29 @@ void chaseBall(const objectState_t &ballState, const Field f, const Penalty p, c
 
 
     if(nearArea(positionX, positionZ, p, f))
+=======
+    const float goalHalfWidthZ = 0.25f;        
+    const bool lateral = (std::fabs(positionZ) > goalHalfWidthZ);
+    if(lateral)
+>>>>>>> 27f4d7d48de714c9f7ea22384e5d65b3af2df1a7
     {
-        kickVal = 1.0f;
-    }
-    else
-    {
-         kickVal = 0.0f;
-    }
+        const float aimX = positionX + 0.20f;  // empujar hacia adelante
+        const float aimZ = 0.0f;               // recentrar en Z
 
-    if(int n = nearBorderX(positionX, f))
-    {
-        if(n == 1)
-        {
-            rotateY += 180 * DEG_TO_RAD;
-        }
-        else if (n == -1)
-        {
-            rotateY +=  180 * DEG_TO_RAD;
-        }
+        float vx = aimX - positionX;
+        float vz = aimZ - positionZ;
+        float n  = std::sqrt(vx*vx + vz*vz);
+        if (n < 1e-6f) { vx = 0.0f; vz = 1.0f; n = 1.0f; }
+        vx /= n;  vz /= n;
 
-    }
-    else
-    {
-        rotateY = 0.0f;
-    }
+        const float backDist = 0.07f;
+        float targetX = positionX - vx * backDist;
+        float targetZ = positionZ - vz * backDist;
 
-    if(int n = nearBorderZ(positionZ, f))
-    {
-        if(n == 1)
-        {
-            rotateY += 90 * DEG_TO_RAD;
-        }
-        else if (n == -1)
-        {
-            rotateY += -90 * DEG_TO_RAD;
-        }   
-    }
+        avoidPenaltyAreas(targetX, targetZ, p, f);
+        clampToField(targetX,  targetZ,  f);
 
+<<<<<<< HEAD
     if (nearRival(ballState,rivalDistance, message))
     {
         chirpVal = 0.5f;
@@ -203,29 +197,110 @@ void chaseBall(const objectState_t &ballState, const Field f, const Penalty p, c
     {
         chirpVal = 0.0f;
     }
+=======
+        rotateY  = std::atan2(vx, vz);
+        kickVal  = 0.0f;     // no patear mientras recentramos
+        chirpVal = 0.0f;     // opcional
+>>>>>>> 27f4d7d48de714c9f7ea22384e5d65b3af2df1a7
 
-    json sampleMessage = {
+        json sampleMessage = {
             {"type", "set"},
             {"data",
             {{
                 "homeBot1",
                 {
-                    {"positionXZ", {positionX, positionZ}},
-                    {"rotationY", rotateY},
-                    {"dribbler", 1},
-                    {"kick", kickVal},
-                    {"chirp", chirpVal}
+                    {"positionXZ", {targetX, targetZ}},
+                    {"rotationY",  rotateY},
+                    {"dribbler",   1},
+                    {"kick",       kickVal},
+                    {"chirp",      chirpVal}
                 },
-            }}},
+            }}}
         };
 
-    // cout connects to server
-    cout << sampleMessage.dump() << endl;
+        // cout connects to server
+        cout << sampleMessage.dump() << endl;
 
-    // cerr prints to debug console
-    cerr << "Updated homeBot1 pose." << endl;
+        // cerr prints to debug console
+        cerr << "homeBot1 RECENTER -> target(" << targetX << "," << targetZ
+             << ") yaw=" << rotateY << " (ballZ=" << positionZ << " fuera de palos)\n";
+
+        return; 
+    }
+
+    else{
+        avoidPenaltyAreas(positionX, positionZ, p, f);
+        clampToField(positionX, positionZ, f);
 
 
+        if(nearArea(positionX, positionZ, p, f))
+        {
+            kickVal = 1.0f;
+        }
+        else
+        {
+            kickVal = 0.0f;
+        }
+
+        if(int n = nearBorderX(positionX, f))
+        {
+            if(n == 1)
+            {
+                rotateY += 180 * DEG_TO_RAD;
+            }
+            else if (n == -1)
+            {
+                rotateY +=  180 * DEG_TO_RAD;
+            }
+
+        }
+        else
+        {
+            rotateY = 0.0f;
+        }
+
+        if(int n = nearBorderZ(positionZ, f))
+        {
+            if(n == 1)
+            {
+                rotateY += 90 * DEG_TO_RAD;
+            }
+            else if (n == -1)
+            {
+                rotateY += -90 * DEG_TO_RAD;
+            }   
+        }
+
+        if (nearRival(ballState, message))
+        {
+            chirpVal = 0.5f;
+            kickVal = 0.5f;
+        }
+        {
+            chirpVal = 0.0f;
+        }
+
+        json sampleMessage = {
+                {"type", "set"},
+                {"data",
+                {{
+                    "homeBot1",
+                    {
+                        {"positionXZ", {positionX, positionZ}},
+                        {"rotationY", rotateY},
+                        {"dribbler", 1},
+                        {"kick", kickVal},
+                        {"chirp", chirpVal}
+                    },
+                }}},
+            };
+
+        // cout connects to server
+        cout << sampleMessage.dump() << endl;
+
+        // cerr prints to debug console
+        cerr << "Updated homeBot1 pose." << endl;
+    }
 }
 void rotationSample(void)
 {
