@@ -113,30 +113,22 @@ void chaseBall(const objectState_t &ballState, const Field f, const Penalty p, c
     const bool lateral = (std::fabs(positionZ) > goalHalfWidthZ);
     if(lateral)
     {
-        // Objetivo: centro del arco rival (Z = 0). Asumo arco rival hacia +X.
-        // Si tu arco rival está hacia -X o el eje “adelante” es Z, ajustá los ejes/rotación.
         const float aimX = positionX + 0.20f;  // empujar hacia adelante
         const float aimZ = 0.0f;               // recentrar en Z
 
-        // Vector desde la pelota hacia el objetivo
         float vx = aimX - positionX;
         float vz = aimZ - positionZ;
         float n  = std::sqrt(vx*vx + vz*vz);
         if (n < 1e-6f) { vx = 0.0f; vz = 1.0f; n = 1.0f; }
         vx /= n;  vz /= n;
 
-        // Ubicar el robot DETRÁS de la pelota para empujarla hacia el centro
         const float backDist = 0.07f;
         float targetX = positionX - vx * backDist;
         float targetZ = positionZ - vz * backDist;
 
-        // Respetar límites / penales con tus helpers existentes
         avoidPenaltyAreas(targetX, targetZ, p, f);
         clampToField(targetX,  targetZ,  f);
 
-        // Orientar mirando al objetivo.
-        // Convención asumida: rotationY = atan2(dirX, dirZ) (0 rad -> +Z).
-        // Si tu 0 rad apunta a +X, reemplazá por atan2(dirZ, dirX) o sumá ±90°.
         rotateY  = std::atan2(vx, vz);
         kickVal  = 0.0f;     // no patear mientras recentramos
         chirpVal = 0.0f;     // opcional
@@ -163,8 +155,7 @@ void chaseBall(const objectState_t &ballState, const Field f, const Penalty p, c
         cerr << "homeBot1 RECENTER -> target(" << targetX << "," << targetZ
              << ") yaw=" << rotateY << " (ballZ=" << positionZ << " fuera de palos)\n";
 
-        return; // <-- CLAVE: no dejes que la lógica "recta" imprima otro set en este state
-    
+        return; 
     }
 
     else{
