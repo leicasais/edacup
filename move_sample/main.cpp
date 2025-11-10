@@ -78,53 +78,22 @@ void trackObject(objectState_t &objectState, char objectType, const json &messag
     objectState.angularVelocity[2] = jobj["angularVelocity"][2];
 }
 
-float * nearRival(const objectState_t& ballState, float * temple,  const json &message)
+bool nearRival(const objectState_t& ballState, const json &message)
 {
     objectState_t rival1;
     trackObject(rival1, RIVAL1, message);
     objectState_t rival2;
     trackObject(rival2, RIVAL2, message);
 
-<<<<<<< HEAD
-    float distanceToRival1[] = {
-                               ballState.position[0] - rival1.position[0],
-                               ballState.position[2] - rival1.position[2]
-                            };
-    float distanceToRival2[] = {
-                               ballState.position[0] - rival2.position[0],
-                               ballState.position[2] - rival2.position[2]
-                            };
-
-    float eDistanceToRival1 = sqrt(pow(distanceToRival1[0], 2) +pow(distanceToRival1[1], 2));
-
-    float eDistanceToRival2 = sqrt((distanceToRival2[0], 2) +pow(distanceToRival2[1], 2));
-=======
     float distanceToRival1 = sqrt(pow(ballState.position[0] - rival1.position[0], 2) +
-pow(ballState.position[2] - rival1.position[2], 2));
+                                 pow(ballState.position[2] - rival1.position[2], 2));
     float distanceToRival2 = sqrt(pow(ballState.position[0] - rival2.position[0], 2) +
                                     pow(ballState.position[2] - rival2.position[2], 2));
->>>>>>> 27f4d7d48de714c9f7ea22384e5d65b3af2df1a7
     
-    if(eDistanceToRival1 < 0.2f || eDistanceToRival2 < 0.2f){
-
-        if(distanceToRival1 < distanceToRival2)
-        {
-            temple[0] = distanceToRival1[0];
-            temple[1] = distanceToRival1[1];
-        }
-        else
-        {
-            temple[0] = distanceToRival2[0];
-            temple[1] = distanceToRival2[1];
-        }
-       
-    }
+    if(distanceToRival1 < 0.2f || distanceToRival2 < 0.2f)
+        return true;
     else
-    {
-        temple = nullptr;
-    }
-
-    return temple;
+        return false;
 
 
 }
@@ -140,177 +109,68 @@ void chaseBall(const objectState_t &ballState, const Field f, const Penalty p, c
     float rotateY = 0.0f;
     float chirpVal = 1.0f;
 
-<<<<<<< HEAD
-    float rivalDistance[2];
-
     avoidPenaltyAreas(positionX, positionZ, p, f);
     clampToField(positionX, positionZ, f);
 
 
     if(nearArea(positionX, positionZ, p, f))
-=======
-    const float goalHalfWidthZ = 0.25f;        
-    const bool lateral = (std::fabs(positionZ) > goalHalfWidthZ);
-    if(lateral)
->>>>>>> 27f4d7d48de714c9f7ea22384e5d65b3af2df1a7
     {
-        const float aimX = positionX + 0.20f;  // empujar hacia adelante
-        const float aimZ = 0.0f;               // recentrar en Z
-
-        float vx = aimX - positionX;
-        float vz = aimZ - positionZ;
-        float n  = std::sqrt(vx*vx + vz*vz);
-        if (n < 1e-6f) { vx = 0.0f; vz = 1.0f; n = 1.0f; }
-        vx /= n;  vz /= n;
-
-        const float backDist = 0.07f;
-        float targetX = positionX - vx * backDist;
-        float targetZ = positionZ - vz * backDist;
-
-        avoidPenaltyAreas(targetX, targetZ, p, f);
-        clampToField(targetX,  targetZ,  f);
-
-<<<<<<< HEAD
-    if (nearRival(ballState,rivalDistance, message))
-    {
-        chirpVal = 0.5f;
-        kickVal = 0.5f;
-        if(rivalDistance[0] < 0)
-        {
-            positionX -= 0.1f;
-        }
-        else
-        {
-            positionX += 0.1f;
-        }
-
-        if(rivalDistance[1] < 0)
-        {
-            positionZ -= 0.1f;
-        }
-        else
-        {
-            positionX += 0.1f;
-        }
+        kickVal = 1.0f;
     }
     else
     {
+         kickVal = 0.0f;
+    }
+
+    if(int n = nearBorderX(positionX, f))
+    {
+        if(n == 1)
+        {
+            rotateY += 180 * DEG_TO_RAD;
+        }
+        else if (n == -1)
+        {
+            rotateY +=  180 * DEG_TO_RAD;
+        }
+
+    }
+    else
+    {
+        rotateY = 0.0f;
+    }
+
+    if(int n = nearBorderZ(positionZ, f))
+    {
+        if(n == 1)
+        {
+            rotateY += 90 * DEG_TO_RAD;
+        }
+        else if (n == -1)
+        {
+            rotateY += -90 * DEG_TO_RAD;
+        }   
+    }
+
+    if (nearRival(ballState, message))
+    {
+        chirpVal = 0.5f;
+        kickVal = 0.5f;
+    }
+    {
         chirpVal = 0.0f;
     }
-=======
-        rotateY  = std::atan2(vx, vz);
-        kickVal  = 0.0f;     // no patear mientras recentramos
-        chirpVal = 0.0f;     // opcional
->>>>>>> 27f4d7d48de714c9f7ea22384e5d65b3af2df1a7
 
-        json sampleMessage = {
-            {"type", "set"},
-            {"data",
-            {{
-                "homeBot1",
-                {
-                    {"positionXZ", {targetX, targetZ}},
-                    {"rotationY",  rotateY},
-                    {"dribbler",   1},
-                    {"kick",       kickVal},
-                    {"chirp",      chirpVal}
-                },
-            }}}
-        };
-
-        // cout connects to server
-        cout << sampleMessage.dump() << endl;
-
-        // cerr prints to debug console
-        cerr << "homeBot1 RECENTER -> target(" << targetX << "," << targetZ
-             << ") yaw=" << rotateY << " (ballZ=" << positionZ << " fuera de palos)\n";
-
-        return; 
-    }
-
-    else{
-        avoidPenaltyAreas(positionX, positionZ, p, f);
-        clampToField(positionX, positionZ, f);
-
-
-        if(nearArea(positionX, positionZ, p, f))
-        {
-            kickVal = 1.0f;
-        }
-        else
-        {
-            kickVal = 0.0f;
-        }
-
-        if(int n = nearBorderX(positionX, f))
-        {
-            if(n == 1)
-            {
-                rotateY += 180 * DEG_TO_RAD;
-            }
-            else if (n == -1)
-            {
-                rotateY +=  180 * DEG_TO_RAD;
-            }
-
-        }
-        else
-        {
-            rotateY = 0.0f;
-        }
-
-        if(int n = nearBorderZ(positionZ, f))
-        {
-            if(n == 1)
-            {
-                rotateY += 90 * DEG_TO_RAD;
-            }
-            else if (n == -1)
-            {
-                rotateY += -90 * DEG_TO_RAD;
-            }   
-        }
-
-        if (nearRival(ballState, message))
-        {
-            chirpVal = 0.5f;
-            kickVal = 0.5f;
-        }
-        {
-            chirpVal = 0.0f;
-        }
-
-        json sampleMessage = {
-                {"type", "set"},
-                {"data",
-                {{
-                    "homeBot1",
-                    {
-                        {"positionXZ", {positionX, positionZ}},
-                        {"rotationY", rotateY},
-                        {"dribbler", 1},
-                        {"kick", kickVal},
-                        {"chirp", chirpVal}
-                    },
-                }}},
-            };
-
-        // cout connects to server
-        cout << sampleMessage.dump() << endl;
-
-        // cerr prints to debug console
-        cerr << "Updated homeBot1 pose." << endl;
-    }
-}
-void rotationSample(void)
-{
     json sampleMessage = {
             {"type", "set"},
             {"data",
             {{
                 "homeBot1",
                 {
-                    {"rotationY", 90 * DEG_TO_RAD},
+                    {"positionXZ", {positionX, positionZ}},
+                    {"rotationY", rotateY},
+                    {"dribbler", 1},
+                    {"kick", kickVal},
+                    {"chirp", chirpVal}
                 },
             }}},
         };
@@ -319,10 +179,12 @@ void rotationSample(void)
     cout << sampleMessage.dump() << endl;
 
     // cerr prints to debug console
-    cerr << "Updated homeBot1 rotation." << endl;
-    }
+    cerr << "Updated homeBot1 pose." << endl;
 
-void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goalKeeper, const Field& f, const Penalty& p)
+
+}
+
+void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goalKeeper, const objectState_t &goalie, const Field& f, const Penalty& p)
 {
     float newGKPosition[2];
 
@@ -339,15 +201,49 @@ void goalKeeperTracking(const objectState_t &ballState, const objectState_t &goa
     float linea_sup_arco[2][2] = {{-f.halfX +p.width-p.robotRadius-p.safetyMargin, -f.halfZ +p.depth-p.robotRadius-p.safetyMargin} ,
     {-f.halfX +p.width-p.robotRadius-p.safetyMargin, f.halfZ -p.depth +p.robotRadius+p.safetyMargin}};
 
-    if(ballPositionX >= linea_sup_arco[0][0] && !(linea_sup_arco[0][1] <= ballPositionZ && linea_sup_arco[1][1] >= ballPositionZ)){       //si la pelota esta lejos del area la sigue solo moviendose en la coordenada z
+    float dist_goalie_ball = std::sqrt (std::pow((goalie.position[0]-ballPositionX), 2.0f) + std::pow((goalie.position[2]-ballPositionZ), 2.0f) );
+
+    //si la pelota esta lejos del area y fuera del rango z del arco
+    if(ballPositionX >= linea_sup_arco[0][0]){
         newGKPosition[0] = linea_sup_arco[0][0];
-        newGKPosition[1] = ballPositionZ;
+
+        //si la pelota esta en el intervalo del eje z correspondiente a las coordenadas del arco
+        if(linea_sup_arco[0][1] <= ballPositionZ && linea_sup_arco[1][1] >= ballPositionZ){
+
+            if(dist_goalie_ball <= p.robotRadius){  //distancia minima para contemplar la posicion del goalie
+                if( fabs(goalie.position[2]) < f.halfZ - (p.depth/2.0)*1.5){
+                    newGKPosition[1] = goalie.position[2] -p.robotRadius*2;
+                }
+                else{
+                    newGKPosition[1] = goalie.position[2] +p.robotRadius*2;
+                }
+            }
+            else{
+                newGKPosition[1] = ballPositionZ;
+            }
+        }
+        else{
+            if(dist_goalie_ball <= p.robotRadius){
+                if( fabs(goalie.position[2]) >= f.halfZ- ((f.halfZ-p.depth/2.0) /2.0) ){
+                    newGKPosition[1] = goalie.position[2] -p.robotRadius*2;
+                }
+                else{
+                     newGKPosition[1] = goalie.position[2] +p.robotRadius*2;
+                }
+            }
+            else{
+                if(ballPositionZ <= linea_sup_arco[0][1]){
+                    newGKPosition[1] = linea_sup_arco[0][1];
+                }
+                else{
+                    newGKPosition[1] = linea_sup_arco[1][1];
+                }
+            }
+        }
     }
-    else if (linea_sup_arco[0][1] <= ballPositionZ && linea_sup_arco[1][1] >= ballPositionZ){    //si la pelota esta en el intervalo del eje z correspondiente a las coordenadas del arco
-        newGKPosition[0] = linea_sup_arco[0][0];
-        newGKPosition[1] = ballPositionZ;
-    }
-    else{       //si la pelota esta muy cerca del area se empieza a mover en x y seguir a la pelota
+    
+    //si la pelota esta muy cerca del area se empieza a mover en x y seguir a la pelota
+    else{       
         newGKPosition[0] = ballPositionX;
         newGKPosition[1] = ballPositionZ;
     }
@@ -438,7 +334,7 @@ int main(int argc, char *argv[])
                     trackObject(ball, BALL, message);              
                     trackObject(goalKeeper, GOALKEEPER, message);     
                     chaseBall(ball,f,p, message);
-                    goalKeeperTracking(ball, goalKeeper, f, p);
+                    goalKeeperTracking(ball, goalKeeper, goalie, f, p);
 
                 }
             }
@@ -450,4 +346,3 @@ int main(int argc, char *argv[])
         }
      }
 }
-
